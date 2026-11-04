@@ -1,0 +1,1484 @@
+{
+  "users": [
+    {
+      "id": "670e00000000000000000001",
+      "_id": "670e00000000000000000001",
+      "email": "admin@quizora.com",
+      "username": "quizora_admin",
+      "hashed_password": "$2b$12$R/HfRzpW.HqbdMOzWYbWOuxR96a/q9.GS1Wz1BfMycp2miZiVC4.C",
+      "first_name": "Alexander",
+      "last_name": "Vance",
+      "role": "admin",
+      "is_active": true,
+      "is_verified": true,
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=admin_vance",
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "last_login_at": "2026-11-04T10:35:07.025954+00:00"
+    },
+    {
+      "email": "google_user_mock_goo@gmail.com",
+      "username": "googlelearner",
+      "hashed_password": "$2b$12$BSdrioujghlknevtXQF4YOWytJZyHZxb3GlHILWh2pwluTgIxEyeG",
+      "first_name": "Google",
+      "last_name": "Learner",
+      "role": "user",
+      "is_active": true,
+      "is_verified": true,
+      "google_id": "mock_google_token_signup",
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=googlelearner",
+      "created_at": "2026-11-04T14:36:10.127188+00:00",
+      "updated_at": "2026-11-04T14:36:10.127188+00:00",
+      "id": "6aeb42da5d229eee1c3889f4",
+      "_id": "6aeb42da5d229eee1c3889f4"
+    }
+  ],
+  "categories": [
+    {
+      "id": "670e10000000000000000001",
+      "_id": "670e10000000000000000001",
+      "name": "IT & Programming",
+      "slug": "it-programming",
+      "icon": "Code",
+      "description": "Software architecture, modern frameworks, Python, TypeScript, algorithms.",
+      "language": "en",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000002",
+      "_id": "670e10000000000000000002",
+      "name": "English & IELTS",
+      "slug": "english-ielts",
+      "icon": "Languages",
+      "description": "English Grammar, IELTS Preparation, Lexicon & Advanced Syntax.",
+      "language": "en",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000004",
+      "_id": "670e10000000000000000004",
+      "name": "Design & UI/UX",
+      "slug": "design-ux",
+      "icon": "Palette",
+      "description": "UI Design, Figma, Design Systems, Typography and WCAG accessibility.",
+      "language": "en",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000010",
+      "_id": "670e10000000000000000010",
+      "name": "Ona tili va Adabiyot",
+      "slug": "ona-tili-adabiyot",
+      "icon": "BookOpen",
+      "description": "O'zbek tili grammatikasi, imlo qoidalari, Alisher Navoiy va o'zbek adabiyoti durdonalari.",
+      "language": "uz",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000011",
+      "_id": "670e10000000000000000011",
+      "name": "O'zbekiston tarixi",
+      "slug": "ozbekiston-tarixi",
+      "icon": "Landmark",
+      "description": "Qadimgi Turon sivilizatsiyasi, Amir Temur saltanati, xonliklar va Yangi O'zbekiston tarixi.",
+      "language": "uz",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000012",
+      "_id": "670e10000000000000000012",
+      "name": "Jahon tarixi",
+      "slug": "jahon-tarixi",
+      "icon": "Globe",
+      "description": "Qadimgi dunyo sivilizatsiyalari, Rim, O'rta asrlar, jahon urushlari va yangi davr voqealari.",
+      "language": "uz",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000013",
+      "_id": "670e10000000000000000013",
+      "name": "Matematika (Moslashuvchan)",
+      "slug": "matematika-uz",
+      "icon": "Calculator",
+      "description": "Oddiy arifmetikadan to oliy matematika va integrallargacha darajali testlar to'plami.",
+      "language": "uz",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    },
+    {
+      "id": "670e10000000000000000014",
+      "_id": "670e10000000000000000014",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439 \u044f\u0437\u044b\u043a \u0438 \u043b\u0438\u0442\u0435\u0440\u0430\u0442\u0443\u0440\u0430",
+      "slug": "russkiy-yazyk",
+      "icon": "Languages",
+      "description": "\u041e\u0440\u0444\u043e\u0433\u0440\u0430\u0444\u0438\u044f, \u0441\u0438\u043d\u0442\u0430\u043a\u0441\u0438\u0441, \u0440\u0443\u0441\u0441\u043a\u0430\u044f \u043a\u043b\u0430\u0441\u0441\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0438 \u0441\u043e\u0432\u0440\u0435\u043c\u0435\u043d\u043d\u0430\u044f \u043b\u0438\u0442\u0435\u0440\u0430\u0442\u0443\u0440\u0430.",
+      "language": "ru",
+      "is_active": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
+    }
+  ],
+  "topics": [
+    {
+      "id": "670e20000000000000000001",
+      "_id": "670e20000000000000000001",
+      "category_id": "670e10000000000000000001",
+      "name": "Python & Backend",
+      "slug": "python-backend",
+      "icon": "Terminal",
+      "description": "Core Python 3.12+, AsyncIO, FastAPI, Pydantic & Data Structures."
+    },
+    {
+      "id": "670e20000000000000000002",
+      "_id": "670e20000000000000000002",
+      "category_id": "670e10000000000000000001",
+      "name": "TypeScript Mastery",
+      "slug": "typescript-mastery",
+      "icon": "FileCode",
+      "description": "Generics, Utility Types, Conditional Typing, and strict checks."
+    },
+    {
+      "id": "670e20000000000000000003",
+      "_id": "670e20000000000000000003",
+      "category_id": "670e10000000000000000001",
+      "name": "React 19 & Next.js 15",
+      "slug": "react-nextjs",
+      "icon": "Boxes",
+      "description": "Server Components, App Router, Hooks, Streaming SSR & performance."
+    },
+    {
+      "id": "670e20000000000000000004",
+      "_id": "670e20000000000000000004",
+      "category_id": "670e10000000000000000001",
+      "name": "Algorithmic Systems",
+      "slug": "algorithms",
+      "icon": "Cpu",
+      "description": "Graph traversals, Dynamic Programming, Big-O analysis and memory structures."
+    },
+    {
+      "id": "670e20000000000000000005",
+      "_id": "670e20000000000000000005",
+      "category_id": "670e10000000000000000002",
+      "name": "IELTS & Advanced Syntax",
+      "slug": "ielts-syntax",
+      "icon": "FileText",
+      "description": "Subjunctive clauses, inversion, idiomatic phrasals, cohesive linkers."
+    },
+    {
+      "id": "670e20000000000000000006",
+      "_id": "670e20000000000000000006",
+      "category_id": "670e10000000000000000003",
+      "name": "Linear Algebra & Calculus",
+      "slug": "math-core",
+      "icon": "Compass",
+      "description": "Eigenvalues, Matrix transforms, partial derivatives & optimization."
+    },
+    {
+      "id": "670e20000000000000000007",
+      "_id": "670e20000000000000000007",
+      "category_id": "670e10000000000000000004",
+      "name": "UI/UX & Design Systems",
+      "slug": "design-core",
+      "icon": "Palette",
+      "description": "WCAG 2.1 accessibility, design tokens, spatial typography & micro-interactions."
+    },
+    {
+      "id": "670e20000000000000000010",
+      "_id": "670e20000000000000000010",
+      "category_id": "670e10000000000000000010",
+      "name": "Ona tili: Grammatika va Imlo",
+      "slug": "ona-tili-grammatika",
+      "icon": "BookOpen",
+      "description": "Fonetika, morfologiya, kelishiklar, gap bo'laklari va to'g'ri yozish qoidalari."
+    },
+    {
+      "id": "670e20000000000000000011",
+      "_id": "670e20000000000000000011",
+      "category_id": "670e10000000000000000010",
+      "name": "Mumtoz Adabiyot (Navoiy va Bobur)",
+      "slug": "adabiyot-mumtoz",
+      "icon": "Feather",
+      "description": "Alisher Navoiy, Zahriddin Muhammad Bobur, 'Xamsa', g'azallar va dostonlar."
+    },
+    {
+      "id": "670e20000000000000000012",
+      "_id": "670e20000000000000000012",
+      "category_id": "670e10000000000000000010",
+      "name": "Yangi O'zbek Adabiyoti (Jadidlar)",
+      "slug": "adabiyot-zamonaviy",
+      "icon": "BookMarked",
+      "description": "Abdulla Qodiriy, Cho'lpon, Fitrat, Oybek, Abdulla Qahhor va O'tkir Hoshimov asarlari."
+    },
+    {
+      "id": "670e20000000000000000013",
+      "_id": "670e20000000000000000013",
+      "category_id": "670e10000000000000000011",
+      "name": "Amir Temur va Temuriylar davri",
+      "slug": "uzbtarix-temur",
+      "icon": "Shield",
+      "description": "Amir Temur saltanati, yurishlar, Temur tuzuklari, Mirzo Ulug'bek va temuriy renessans."
+    },
+    {
+      "id": "670e20000000000000000014",
+      "_id": "670e20000000000000000014",
+      "category_id": "670e10000000000000000011",
+      "name": "Qadimgi Turon va Xorazm",
+      "slug": "uzbtarix-qadimgi",
+      "icon": "Landmark",
+      "description": "So'g'diyona, Baqtriya, Ko'hna Xorazm, Zardushtiylik va Avesto davri."
+    },
+    {
+      "id": "670e20000000000000000015",
+      "_id": "670e20000000000000000015",
+      "category_id": "670e10000000000000000011",
+      "name": "Mustaqil O'zbekiston Tarixi",
+      "slug": "uzbtarix-yangi",
+      "icon": "Flag",
+      "description": "O'zbekistonning mustaqillikka erishuvi, konstitutsiya, islohotlar va xalqaro nufuzi."
+    },
+    {
+      "id": "670e20000000000000000016",
+      "_id": "670e20000000000000000016",
+      "category_id": "670e10000000000000000012",
+      "name": "Qadimgi Dunyo va Rim Imperiyasi",
+      "slug": "jahon-qadimgi",
+      "icon": "Columns",
+      "description": "Qadimgi Misr, Bobil, Yunoniston polislari va Qadimgi Rim tarixi."
+    },
+    {
+      "id": "670e20000000000000000017",
+      "_id": "670e20000000000000000017",
+      "category_id": "670e10000000000000000012",
+      "name": "Yangi va Eng Yangi Jahon Tarixi",
+      "slug": "jahon-zamonaviy",
+      "icon": "Globe",
+      "description": "Birinchi va Ikkinchi jahon urushlari, BMT, sovuq urush va XXI asr xalqaro munosabatlari."
+    },
+    {
+      "id": "670e20000000000000000018",
+      "_id": "670e20000000000000000018",
+      "category_id": "670e10000000000000000013",
+      "name": "Arifmetika va Sonlar (1-daraja: Juda oson)",
+      "slug": "matem-arifmetika",
+      "icon": "Plus",
+      "description": "Qo'shish, ayirish, ko'paytirish, bo'lish, karra jadvali va oddiy hisob-kitoblar."
+    },
+    {
+      "id": "670e20000000000000000019",
+      "_id": "670e20000000000000000019",
+      "category_id": "670e10000000000000000013",
+      "name": "Algebra va Tenglamalar (2-daraja: Oson)",
+      "slug": "matem-algebra",
+      "icon": "Variable",
+      "description": "Chiziqli tenglamalar, foizlar, oddiy va o'nli kasrlar, proporsiya."
+    },
+    {
+      "id": "670e20000000000000000020",
+      "_id": "670e20000000000000000020",
+      "category_id": "670e10000000000000000013",
+      "name": "Geometriya va Planimetriya (3-daraja: O'rtacha)",
+      "slug": "matem-geometriya",
+      "icon": "Triangle",
+      "description": "Uchburchaklar, kvadrat tenglamalar, Pifagor teoremasi, perimetr va yuzalar."
+    },
+    {
+      "id": "670e20000000000000000021",
+      "_id": "670e20000000000000000021",
+      "category_id": "670e10000000000000000013",
+      "name": "Trigonometriya va Oliy Matematika (4-5 daraja)",
+      "slug": "matem-oliy",
+      "icon": "TrendingUp",
+      "description": "Sinus, kosinus, logarifmlar, hosilalar, integrallar va kombinatorika."
+    },
+    {
+      "id": "670e20000000000000000022",
+      "_id": "670e20000000000000000022",
+      "category_id": "670e10000000000000000014",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439 \u044f\u0437\u044b\u043a: \u0413\u0440\u0430\u043c\u043c\u0430\u0442\u0438\u043a\u0430 \u0438 \u041b\u0438\u0442\u0435\u0440\u0430\u0442\u0443\u0440\u0430",
+      "slug": "rus-grammatika",
+      "icon": "BookOpen",
+      "description": "\u0421\u043b\u043e\u0432\u0430\u0440\u043d\u044b\u0439 \u0437\u0430\u043f\u0430\u0441, \u0447\u0430\u0441\u0442\u0438 \u0440\u0435\u0447\u0438, \u043f\u0443\u043d\u043a\u0442\u0443\u0430\u0446\u0438\u044f \u0438 \u0440\u0443\u0441\u0441\u043a\u0430\u044f \u043a\u043b\u0430\u0441\u0441\u0438\u043a\u0430."
+    }
+  ],
+  "questions": [
+    {
+      "category_id": "670e10000000000000000001",
+      "topic_id": "670e20000000000000000001",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "In Python 3.12, what is the key difference between asyncio.gather and asyncio.wait?",
+      "options": [
+        {
+          "id": "A",
+          "text": "gather returns results preserving input order, while wait returns done/pending sets"
+        },
+        {
+          "id": "B",
+          "text": "gather runs threads while wait runs processes"
+        },
+        {
+          "id": "C",
+          "text": "gather is deprecated in Python 3.12"
+        },
+        {
+          "id": "D",
+          "text": "wait cannot handle timeouts"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "asyncio.gather preserves the sequential ordering of returned values corresponding to input futures.",
+      "why_correct": "gather guarantees deterministic result index matching input arguments.",
+      "why_user_incorrect": "asyncio operates on event loops, not OS threads or processes by default.",
+      "learning_notes": "Use return_exceptions=True in gather to prevent one task from cancelling the aggregate.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438d7",
+      "_id": "6ae9aaf50a917ab362f438d7"
+    },
+    {
+      "category_id": "670e10000000000000000001",
+      "topic_id": "670e20000000000000000001",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Which Python decorator is used in FastAPI to define an asynchronous dependency injection provider?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Depends"
+        },
+        {
+          "id": "B",
+          "text": "@inject"
+        },
+        {
+          "id": "C",
+          "text": "@provider"
+        },
+        {
+          "id": "D",
+          "text": "@middleware"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "FastAPI uses fastapi.Depends to declare sub-dependencies and shared state across path operations.",
+      "why_correct": "Depends cleanly manages dependency lifetimes and request context.",
+      "why_user_incorrect": "@inject is used in external libraries like dependency-injector.",
+      "learning_notes": "Dependencies can yield to support teardown execution.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438d8",
+      "_id": "6ae9aaf50a917ab362f438d8"
+    },
+    {
+      "category_id": "670e10000000000000000001",
+      "topic_id": "670e20000000000000000001",
+      "difficulty": "hard",
+      "type": "multiple_choice",
+      "stem": "How does Python's GIL (Global Interpreter Lock) impact CPU-bound multi-threaded programs in CPython 3.12?",
+      "options": [
+        {
+          "id": "A",
+          "text": "It restricts bytecode execution to one native thread at a time per interpreter"
+        },
+        {
+          "id": "B",
+          "text": "It doubles CPU execution speed by auto-vectorizing threads"
+        },
+        {
+          "id": "C",
+          "text": "It eliminates the need for locks in user code completely"
+        },
+        {
+          "id": "D",
+          "text": "It forces all I/O operations to be synchronous"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "CPython's GIL ensures thread safety by permitting only one thread to execute Python bytecode at any moment.",
+      "why_correct": "CPU-bound tasks require multiprocessing or subinterpreters to achieve parallel scaling in CPython.",
+      "why_user_incorrect": "GIL only locks bytecode evaluation, not user data structures during race conditions.",
+      "learning_notes": "PEP 703 introduces experimental free-threaded CPython.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438d9",
+      "_id": "6ae9aaf50a917ab362f438d9"
+    },
+    {
+      "category_id": "670e10000000000000000010",
+      "topic_id": "670e20000000000000000010",
+      "difficulty": "very_easy",
+      "type": "multiple_choice",
+      "stem": "O'zbek tilida nechta unli tovush mavjud?",
+      "options": [
+        {
+          "id": "A",
+          "text": "6 ta"
+        },
+        {
+          "id": "B",
+          "text": "10 ta"
+        },
+        {
+          "id": "C",
+          "text": "8 ta"
+        },
+        {
+          "id": "D",
+          "text": "4 ta"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "O'zbek adabiy tilida 6 ta unli fonema mavjud: a, o, i, u, o', e.",
+      "why_correct": "O'zbek tili fonetikasiga ko'ra unlilar soni qat'iy 6 tani tashkil etadi.",
+      "why_user_incorrect": "Boshqa raqamlar rus tili yoki kirill alifbosi harflari bilan adashtirilgan.",
+      "learning_notes": "Unlilar: [a], [o], [i], [u], [o'], [e].",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438da",
+      "_id": "6ae9aaf50a917ab362f438da"
+    },
+    {
+      "category_id": "670e10000000000000000010",
+      "topic_id": "670e20000000000000000010",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Qaratqich kelishigining qo'shimchasi qaysi javobda to'g'ri ko'rsatilgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-ning"
+        },
+        {
+          "id": "B",
+          "text": "-ni"
+        },
+        {
+          "id": "C",
+          "text": "-ga"
+        },
+        {
+          "id": "D",
+          "text": "-da"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Qaratqich kelishigi '-ning' qo'shimchasi orqali hosil bo'ladi va 'kimning?', 'nimaning?' so'roqlariga javob beradi.",
+      "why_correct": "-ning qo'shimchasi predmetning kimga yoki nimaga qarashli ekanligini ifodalaydi.",
+      "why_user_incorrect": "-ni tushum, -ga jo'nalish, -da esa o'rin-payt kelishigi qo'shimchasidir.",
+      "learning_notes": "O'zbek tilida 6 ta kelishik bor: Bosh, Qaratqich (-ning), Tushum (-ni), Jo'nalish (-ga), O'rin-payt (-da), Chiqish (-dan).",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438db",
+      "_id": "6ae9aaf50a917ab362f438db"
+    },
+    {
+      "category_id": "670e10000000000000000010",
+      "topic_id": "670e20000000000000000010",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "Qaysi so'z imlo qoidasiga ko'ra xato yozilgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Muvofiq"
+        },
+        {
+          "id": "B",
+          "text": "Muvaffaqiyat"
+        },
+        {
+          "id": "C",
+          "text": "Taajub"
+        },
+        {
+          "id": "D",
+          "text": "Tafakkur"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "'Taajjub' so'zi ikkita 'j' harfi bilan yozilishi shart: taajjub.",
+      "why_correct": "To'g'ri yozilishi 'taajjub' shaklida bo'ladi.",
+      "why_user_incorrect": "'Muvofiq', 'muvaffaqiyat' va 'tafakkur' so'zlari to'liq imlo me'yorlariga mos.",
+      "learning_notes": "Ikkilangan undoshlar (geminata) talaffuz va yozuvda e'tibor talab qiladi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438dc",
+      "_id": "6ae9aaf50a917ab362f438dc"
+    },
+    {
+      "category_id": "670e10000000000000000010",
+      "topic_id": "670e20000000000000000011",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Alisher Navoiyning 'Xamsa' asariga kirmaydigan doston qaysi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lison ut-tayr"
+        },
+        {
+          "id": "B",
+          "text": "Hayrat ul-abror"
+        },
+        {
+          "id": "C",
+          "text": "Farhod va Shirin"
+        },
+        {
+          "id": "D",
+          "text": "Sab'ai sayyor"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "'Lison ut-tayr' Navoiyning falsafiy dostoni bo'lib, 'Xamsa' tarkibiga kirmaydi.",
+      "why_correct": "Xamsa dostonlari: Hayrat ul-abror, Farhod va Shirin, Layli va Majnun, Sab'ai sayyor, Saddi Iskandariy.",
+      "why_user_incorrect": "Boshqa barcha variantlar Xamsa tarkibidagi besh doston qatoriga kiradi.",
+      "learning_notes": "Xamsa 1483-1485 yillarda turkiy tilda yaratilgan.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438dd",
+      "_id": "6ae9aaf50a917ab362f438dd"
+    },
+    {
+      "category_id": "670e10000000000000000010",
+      "topic_id": "670e20000000000000000012",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "O'zbek adabiyotidagi ilk realistik roman qaysi asar hisoblanadi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "O'tkan kunlar (Abdulla Qodiriy)"
+        },
+        {
+          "id": "B",
+          "text": "Kecha va kunduz (Cho'lpon)"
+        },
+        {
+          "id": "C",
+          "text": "Navoiy (Oybek)"
+        },
+        {
+          "id": "D",
+          "text": "Sarob (Abdulla Qahhor)"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Abdulla Qodiriy 1922-yilda yozib tugatgan 'O'tkan kunlar' o'zbek adabiyotidagi birinchi romandir.",
+      "why_correct": "'O'tkan kunlar' asari yangi o'zbek romanchiligiga asos solgan shoh asardir.",
+      "why_user_incorrect": "Cho'lponning 'Kecha va kunduz' romani 1936-yilda nashr etilgan bo'lib, keyingi davrga tegishli.",
+      "learning_notes": "Qahramonlari: Otabek, Kumushbibi, Zaynab, Homid.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438de",
+      "_id": "6ae9aaf50a917ab362f438de"
+    },
+    {
+      "category_id": "670e10000000000000000011",
+      "topic_id": "670e20000000000000000013",
+      "difficulty": "very_easy",
+      "type": "multiple_choice",
+      "stem": "Amir Temur davlatining poytaxti qaysi shahar bo'lgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Samarqand"
+        },
+        {
+          "id": "B",
+          "text": "Buxoro"
+        },
+        {
+          "id": "C",
+          "text": "Toshkent"
+        },
+        {
+          "id": "D",
+          "text": "Hirot"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Amir Temur 1370-yilda hokimiyat tepasiga kelgach, Samarqand shahrini o'z saltanatining poytaxti deb e'lon qilgan.",
+      "why_correct": "Samarqand Amir Temur davrida dunyoning eng go'zal va qudratli shaharlaridan biriga aylantirilgan.",
+      "why_user_incorrect": "Hirot Shohrux Mirzo davrida poytaxt bo'lgan, Buxoro esa xonlik davrida poytaxt bo'lgan.",
+      "learning_notes": "Amir Temur shiori: 'Kuch \u2014 adolatdadir'.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438df",
+      "_id": "6ae9aaf50a917ab362f438df"
+    },
+    {
+      "category_id": "670e10000000000000000011",
+      "topic_id": "670e20000000000000000013",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "Amir Temur qaysi jangda Usmonli turk sultoni Boyazid I Yildirimni mag'lubiyatga uchratgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Anqara jangi (1402-yil)"
+        },
+        {
+          "id": "B",
+          "text": "Kondurcha jangi (1391-yil)"
+        },
+        {
+          "id": "C",
+          "text": "Loy jangi (1365-yil)"
+        },
+        {
+          "id": "D",
+          "text": "Terek daryosi bo'yidagi jang (1395-yil)"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "1402-yil 20-iyulda Anqara yaqinida bo'lib o'tgan buyuk jangda Amir Temur g'alaba qozongan.",
+      "why_correct": "Anqara jangi Yevropaning Usmonli imperiyasi tomonidan zabt etilishini 50 yilga kechiktirgan.",
+      "why_user_incorrect": "Kondurcha va Terek janglari To'xtamishxonga qarshi bo'lgan.",
+      "learning_notes": "Amir Temur harbiy san'atda yengilmas sarkarda sifatida tarixda qolgan.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e0",
+      "_id": "6ae9aaf50a917ab362f438e0"
+    },
+    {
+      "category_id": "670e10000000000000000011",
+      "topic_id": "670e20000000000000000015",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "O'zbekiston Respublikasining davlat mustaqilligi qachon e'lon qilingan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1991-yil 31-avgust"
+        },
+        {
+          "id": "B",
+          "text": "1992-yil 8-dekabr"
+        },
+        {
+          "id": "C",
+          "text": "1990-yil 20-iyun"
+        },
+        {
+          "id": "D",
+          "text": "1991-yil 1-sentabr"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "1991-yil 31-avgustda Oliy Kengashning navbatdan tashqari sessiyasida O'zbekistonning davlat mustaqilligi e'lon qilingan.",
+      "why_correct": "1-sentabr esa Mustaqillik bayrami kuni sifatida nishonlanadi.",
+      "why_user_incorrect": "1992-yil 8-dekabrda Konstitutsiya qabul qilingan.",
+      "learning_notes": "O'zbekiston BMTga 1992-yil 2-martda a'zo bo'lgan.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e1",
+      "_id": "6ae9aaf50a917ab362f438e1"
+    },
+    {
+      "category_id": "670e10000000000000000011",
+      "topic_id": "670e20000000000000000014",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Qadimgi Turon xalqlarining muqaddas diniy va yozma yodgorligi qaysi manba hisoblanadi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Avesto kitobi"
+        },
+        {
+          "id": "B",
+          "text": "Behistun yozuvlari"
+        },
+        {
+          "id": "C",
+          "text": "O'rxun-Enasoy bitiklari"
+        },
+        {
+          "id": "D",
+          "text": "Qutadg'u bilig"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Zardushtiylik dinining muqaddas kitobi 'Avesto' Turon zaminida yaratilgan eng qadimgi manbadir.",
+      "why_correct": "Avesto miloddan avvalgi 1-ming yillik boshlarida shakllangan.",
+      "why_user_incorrect": "Behistun qoyatosh yozuvlari Eron shohi Doro I buyrug'i bilan yozilgan.",
+      "learning_notes": "Avestoning eng qadimiy qismi 'Gatlar' Zardusht tomonidan aytilgan deb hisoblanadi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e2",
+      "_id": "6ae9aaf50a917ab362f438e2"
+    },
+    {
+      "category_id": "670e10000000000000000011",
+      "topic_id": "670e20000000000000000014",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "Massagetlar malikasi To'maris Eron shohi Kir II ning bosqinchi qo'shinini qachon tor-mor keltirgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Miloddan avvalgi 530-yilda"
+        },
+        {
+          "id": "B",
+          "text": "Miloddan avvalgi 329-yilda"
+        },
+        {
+          "id": "C",
+          "text": "Miloddan avvalgi 522-yilda"
+        },
+        {
+          "id": "D",
+          "text": "Milodiy 120-yilda"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Miloddan avvalgi 530-yilda To'maris jasorati tufayli forslar shohi Kir II ning qo'shini butunlay mag'lub etilgan.",
+      "why_correct": "Ushbu mashhur jang Gerodotning 'Tarix' asarida batafsil yoritilgan.",
+      "why_user_incorrect": "Miloddan avvalgi 329-yilda Makedoniyalik Iskandar O'rta Osiyoga bostirib kirgan.",
+      "learning_notes": "To'maris jasorati vatanparvarlik va ozodlik kurashining buyuk timsoli sanaladi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e3",
+      "_id": "6ae9aaf50a917ab362f438e3"
+    },
+    {
+      "category_id": "670e10000000000000000012",
+      "topic_id": "670e20000000000000000016",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Qadimgi Misr podsholari qanday unvon bilan atalgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Fir'avn"
+        },
+        {
+          "id": "B",
+          "text": "Sezar"
+        },
+        {
+          "id": "C",
+          "text": "Xoqon"
+        },
+        {
+          "id": "D",
+          "text": "Imperator"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Qadimgi Misrda oliy hukmdorlar Fir'avn (Pharaoh) deb atalgan.",
+      "why_correct": "Fir'avn so'zi 'katta uy' ma'nosini berib, shoh hokimiyatini ifodalagan.",
+      "why_user_incorrect": "Sezar Rimda, Xoqon turkiy davlatlarda qo'llanilgan.",
+      "learning_notes": "Mashhur fir'avnlar: Ramses II, Tutanxamon, Xufu (Xeops).",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e4",
+      "_id": "6ae9aaf50a917ab362f438e4"
+    },
+    {
+      "category_id": "670e10000000000000000012",
+      "topic_id": "670e20000000000000000017",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Birlashgan Millatlar Tashkiloti (BMT) rasman qaysi yili tashkil topgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1945-yilda"
+        },
+        {
+          "id": "B",
+          "text": "1919-yilda"
+        },
+        {
+          "id": "C",
+          "text": "1939-yilda"
+        },
+        {
+          "id": "D",
+          "text": "1955-yilda"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Ikkinchi jahon urushidan so'ng, 1945-yil 24-oktabrda San-Fransiskoda BMT ustavi kuchga kirgan.",
+      "why_correct": "24-oktabr har yili Xalqaro BMT kuni sifatida nishonlanadi.",
+      "why_user_incorrect": "1919-yilda Millatlar Ligasi tuzilgan bo'lib, keyinchalik o'z faoliyatini to'xtatgan.",
+      "learning_notes": "BMTning bosh qarorgohi AQSHning Nyu-York shahrida joylashgan.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e5",
+      "_id": "6ae9aaf50a917ab362f438e5"
+    },
+    {
+      "category_id": "670e10000000000000000012",
+      "topic_id": "670e20000000000000000017",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "Birinchi jahon urushi qaysi yillarda bo'lib o'tgan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1914 \u2013 1918 yillarda"
+        },
+        {
+          "id": "B",
+          "text": "1939 \u2013 1945 yillarda"
+        },
+        {
+          "id": "C",
+          "text": "1905 \u2013 1907 yillarda"
+        },
+        {
+          "id": "D",
+          "text": "1917 \u2013 1922 yillarda"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Birinchi jahon urushi 1914-yil 28-iyuldan 1918-yil 11-noyabrgacha davom etgan.",
+      "why_correct": "Urush Kompyen sulhi bilan yakunlangan.",
+      "why_user_incorrect": "1939\u20131945 yillarda esa Ikkinchi jahon urushi bo'lib o'tgan.",
+      "learning_notes": "Urush Antanta va Uchlar ittifoqi o'rtasida global miqyosda kechgan.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e6",
+      "_id": "6ae9aaf50a917ab362f438e6"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000018",
+      "difficulty": "very_easy",
+      "type": "multiple_choice",
+      "stem": "Hisoblang: 48 + 37 nimaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "85"
+        },
+        {
+          "id": "B",
+          "text": "75"
+        },
+        {
+          "id": "C",
+          "text": "95"
+        },
+        {
+          "id": "D",
+          "text": "81"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "48 + 37 = (48 + 30) + 7 = 78 + 7 = 85.",
+      "why_correct": "Oddiy arifmetik qo'shish qoidasiga ko'ra yig'indi 85 ga teng.",
+      "why_user_incorrect": "O'nlikdan o'tishda xatolik qilingan.",
+      "learning_notes": "Boshlang'ich arifmetik amallar aniqlikni talab qiladi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e7",
+      "_id": "6ae9aaf50a917ab362f438e7"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000018",
+      "difficulty": "very_easy",
+      "type": "multiple_choice",
+      "stem": "Hisoblang: 14 * 6 nimaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "84"
+        },
+        {
+          "id": "B",
+          "text": "74"
+        },
+        {
+          "id": "C",
+          "text": "94"
+        },
+        {
+          "id": "D",
+          "text": "86"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "14 * 6 = (10 * 6) + (4 * 6) = 60 + 24 = 84.",
+      "why_correct": "Ko'paytirish jadvali qoidasi bo'yicha javob 84.",
+      "why_user_incorrect": "Boshqa variantlar noto'g'ri ko'paytirish oqibatidir.",
+      "learning_notes": "Ko'paytirishning taqsimot qonuni: (a + b) * c = a*c + b*c.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e8",
+      "_id": "6ae9aaf50a917ab362f438e8"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000019",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "350 sonining 20 foizini (20%) toping.",
+      "options": [
+        {
+          "id": "A",
+          "text": "70"
+        },
+        {
+          "id": "B",
+          "text": "35"
+        },
+        {
+          "id": "C",
+          "text": "50"
+        },
+        {
+          "id": "D",
+          "text": "80"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "350 * (20 / 100) = 350 * 0.2 = 70.",
+      "why_correct": "20% sonning beshdan bir qismiga teng: 350 / 5 = 70.",
+      "why_user_incorrect": "35 soni 10% ga teng, 70 esa 20% ga to'g'ri keladi.",
+      "learning_notes": "Sonning p foizini topish uchun sonni p ga ko'paytirib 100 ga bo'lamiz.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438e9",
+      "_id": "6ae9aaf50a917ab362f438e9"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000019",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "Tenglamani yeching: 5x - 15 = 35. x ning qiymati nechaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "10"
+        },
+        {
+          "id": "B",
+          "text": "8"
+        },
+        {
+          "id": "C",
+          "text": "12"
+        },
+        {
+          "id": "D",
+          "text": "7"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "5x = 35 + 15 => 5x = 50 => x = 10.",
+      "why_correct": "Tekshirish: 5 * 10 - 15 = 50 - 15 = 35.",
+      "why_user_incorrect": "Tenglamaning o'ng tomoniga sonni ishorasini teskari qilib o'tkazish kerak.",
+      "learning_notes": "Chiziqli tenglamalarda ozod sonlar o'ng tomonga qarama-qarshi ishora bilan o'tadi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438ea",
+      "_id": "6ae9aaf50a917ab362f438ea"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000020",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "Kvadrat tenglamaning ildizlarini toping: x\u00b2 - 7x + 12 = 0.",
+      "options": [
+        {
+          "id": "A",
+          "text": "x1 = 3, x2 = 4"
+        },
+        {
+          "id": "B",
+          "text": "x1 = 2, x2 = 6"
+        },
+        {
+          "id": "C",
+          "text": "x1 = -3, x2 = -4"
+        },
+        {
+          "id": "D",
+          "text": "x1 = 1, x2 = 12"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Viyet teoremasiga ko'ra: x1 + x2 = 7, x1 * x2 = 12. Demak, 3 va 4.",
+      "why_correct": "Diskriminant D = 49 - 48 = 1. x = (7 \u00b1 1) / 2 => x1 = 4, x2 = 3.",
+      "why_user_incorrect": "-3 va -4 yig'indisi -7 bo'ladi, bizda esa +7 bo'lishi kerak.",
+      "learning_notes": "Keltirilgan kvadrat tenglamada Viyet teoremasi: x1 + x2 = -p, x1 * x2 = q.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438eb",
+      "_id": "6ae9aaf50a917ab362f438eb"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000020",
+      "difficulty": "medium",
+      "type": "multiple_choice",
+      "stem": "To'g'ri burchakli uchburchakning katetlari a = 6 sm va b = 8 sm bo'lsa, uning gipotenuzasi (c) necha sm?",
+      "options": [
+        {
+          "id": "A",
+          "text": "10 sm"
+        },
+        {
+          "id": "B",
+          "text": "12 sm"
+        },
+        {
+          "id": "C",
+          "text": "14 sm"
+        },
+        {
+          "id": "D",
+          "text": "9 sm"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Pifagor teoremasiga ko'ra: c\u00b2 = a\u00b2 + b\u00b2 = 6\u00b2 + 8\u00b2 = 36 + 64 = 100. c = \u221a100 = 10 sm.",
+      "why_correct": "Misr uchburchagi qoidasi (3:4:5 nisbat): 6, 8, 10.",
+      "why_user_incorrect": "Katetlar kvadratlari yig'indisidan ildiz chiqarish lozim.",
+      "learning_notes": "Pifagor teoremasi: to'g'ri burchakli uchburchakda gipotenuza kvadrati katetlar kvadratlari yig'indisiga teng.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438ec",
+      "_id": "6ae9aaf50a917ab362f438ec"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000021",
+      "difficulty": "hard",
+      "type": "multiple_choice",
+      "stem": "Hisoblang: log\u2082 64 ning qiymati nechaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "6"
+        },
+        {
+          "id": "B",
+          "text": "5"
+        },
+        {
+          "id": "C",
+          "text": "8"
+        },
+        {
+          "id": "D",
+          "text": "32"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "2 ning nechanchi darajasi 64 ga teng? 2\u2076 = 64. Shuning uchun log\u2082 64 = 6.",
+      "why_correct": "Logarifm ta'rifiga ko'ra a^c = b bo'lsa, log_a b = c bo'ladi.",
+      "why_user_incorrect": "2\u2075 = 32, 2\u2076 = 64.",
+      "learning_notes": "Logarifm \u2014 berilgan asosni kerakli songa yetkazish uchun kerak bo'lgan daraja ko'rsatkichidir.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438ed",
+      "_id": "6ae9aaf50a917ab362f438ed"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000021",
+      "difficulty": "hard",
+      "type": "multiple_choice",
+      "stem": "Trigonometrik ifodaning qiymatini toping: sin\u00b2(42\u00b0) + cos\u00b2(42\u00b0) + cos(60\u00b0).",
+      "options": [
+        {
+          "id": "A",
+          "text": "1.5"
+        },
+        {
+          "id": "B",
+          "text": "1.0"
+        },
+        {
+          "id": "C",
+          "text": "2.0"
+        },
+        {
+          "id": "D",
+          "text": "0.5"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Asosiy trigonometrik ayniyat bo'yicha: sin\u00b2\u03b1 + cos\u00b2\u03b1 = 1. cos(60\u00b0) = 0.5. Demak, 1 + 0.5 = 1.5.",
+      "why_correct": "sin\u00b2(42\u00b0) + cos\u00b2(42\u00b0) = 1 ayniyati har qanday burchak uchun o'rinli.",
+      "why_user_incorrect": "cos(60\u00b0) = 1/2 qiymatini yodda tutish lozim.",
+      "learning_notes": "Asosiy ayniyat: sin\u00b2 x + cos\u00b2 x = 1.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438ee",
+      "_id": "6ae9aaf50a917ab362f438ee"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000021",
+      "difficulty": "very_hard",
+      "type": "multiple_choice",
+      "stem": "Hosilani hisoblang: f(x) = 2x\u00b3 - 6x\u00b2 + 5x - 7 funksiyaning x = 1 dagi hosilasi f'(1) nimaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "-1"
+        },
+        {
+          "id": "B",
+          "text": "5"
+        },
+        {
+          "id": "C",
+          "text": "0"
+        },
+        {
+          "id": "D",
+          "text": "-7"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "f'(x) = 6x\u00b2 - 12x + 5. x = 1 qo'ysak: f'(1) = 6(1) - 12(1) + 5 = 6 - 12 + 5 = -1.",
+      "why_correct": "(x\u207f)' = n*x\u207f\u207b\u00b9 differensiallash qoidasi to'g'ri tatbiq etilgan.",
+      "why_user_incorrect": "Doimiy sonning hosilasi 0 ga teng: (-7)' = 0.",
+      "learning_notes": "Funksiyaning hosilasi o'zgarish tezligini ko'rsatadi.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438ef",
+      "_id": "6ae9aaf50a917ab362f438ef"
+    },
+    {
+      "category_id": "670e10000000000000000013",
+      "topic_id": "670e20000000000000000021",
+      "difficulty": "very_hard",
+      "type": "multiple_choice",
+      "stem": "Aniq integralni hisoblang: \u222b\u2080\u00b2 (3x\u00b2) dx nimaga teng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "8"
+        },
+        {
+          "id": "B",
+          "text": "12"
+        },
+        {
+          "id": "C",
+          "text": "6"
+        },
+        {
+          "id": "D",
+          "text": "24"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "Boshlang'ich funksiya F(x) = x\u00b3. Nyuton-Leybnits formulasi: F(2) - F(0) = 2\u00b3 - 0\u00b3 = 8.",
+      "why_correct": "\u222b 3x\u00b2 dx = x\u00b3 bo'lib, chegaralari 0 dan 2 gacha olinganda 2\u00b3 = 8 chiqadi.",
+      "why_user_incorrect": "Boshlang'ich funksiyani topishda ko'paytuvchini integrallash qoidasi: \u222b x\u00b2 dx = x\u00b3/3.",
+      "learning_notes": "Nyuton-Leybnits formulasi: \u222b\u2090\u1d47 f(x)dx = F(b) - F(a).",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438f0",
+      "_id": "6ae9aaf50a917ab362f438f0"
+    },
+    {
+      "category_id": "670e10000000000000000014",
+      "topic_id": "670e20000000000000000022",
+      "difficulty": "easy",
+      "type": "multiple_choice",
+      "stem": "\u0412 \u043a\u0430\u043a\u043e\u043c \u0441\u043b\u043e\u0432\u0435 \u043f\u0438\u0448\u0435\u0442\u0441\u044f \u0431\u0443\u043a\u0432\u0430 '\u041e'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "\u0428\u043e\u0440\u043e\u0445"
+        },
+        {
+          "id": "B",
+          "text": "\u0428\u0451\u043f\u043e\u0442"
+        },
+        {
+          "id": "C",
+          "text": "\u0416\u0451\u043b\u0442\u044b\u0439"
+        },
+        {
+          "id": "D",
+          "text": "\u0429\u0451\u043b\u043a\u0430\u0442\u044c"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "\u0412 \u043a\u043e\u0440\u043d\u0435 \u0441\u043b\u043e\u0432\u0430 '\u0448\u043e\u0440\u043e\u0445' \u043f\u0438\u0448\u0435\u0442\u0441\u044f '\u043e' (\u0441\u043b\u043e\u0432\u043e-\u0438\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435 \u043f\u043e\u0434 \u0443\u0434\u0430\u0440\u0435\u043d\u0438\u0435\u043c \u043f\u043e\u0441\u043b\u0435 \u0448\u0438\u043f\u044f\u0449\u0438\u0445).",
+      "why_correct": "\u0421\u043b\u043e\u0432\u0430 '\u0448\u0451\u043f\u043e\u0442' (\u0448\u0435\u043f\u0442\u0430\u0442\u044c), '\u0436\u0451\u043b\u0442\u044b\u0439' (\u0436\u0435\u043b\u0442\u0435\u0442\u044c) \u043f\u0440\u043e\u0432\u0435\u0440\u044f\u044e\u0442\u0441\u044f \u043e\u0434\u043d\u043e\u043a\u043e\u0440\u0435\u043d\u043d\u044b\u043c\u0438 \u0441\u043b\u043e\u0432\u0430\u043c\u0438 \u0441 '\u0435'.",
+      "why_user_incorrect": "\u041e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u043b\u043e\u0432\u0430 \u043f\u0438\u0448\u0443\u0442\u0441\u044f \u0447\u0435\u0440\u0435\u0437 '\u0451'.",
+      "learning_notes": "\u041f\u043e\u0441\u043b\u0435 \u0448\u0438\u043f\u044f\u0449\u0438\u0445 \u043f\u043e\u0434 \u0443\u0434\u0430\u0440\u0435\u043d\u0438\u0435\u043c \u0432 \u043a\u043e\u0440\u043d\u0435 \u043f\u0438\u0448\u0435\u0442\u0441\u044f '\u0451', \u0435\u0441\u043b\u0438 \u0435\u0441\u0442\u044c \u0447\u0435\u0440\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435 \u0441 '\u0435'.",
+      "is_approved": true,
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438f1",
+      "_id": "6ae9aaf50a917ab362f438f1"
+    }
+  ],
+  "achievements": [
+    {
+      "code": "first_quiz",
+      "name": "First Step",
+      "description": "Complete your very first quiz on Quizora.",
+      "icon": "Rocket",
+      "category": "Milestone",
+      "xp_reward": 50,
+      "coin_reward": 0,
+      "id": "6ae9aaf50a917ab362f438f2",
+      "_id": "6ae9aaf50a917ab362f438f2"
+    },
+    {
+      "code": "quiz_10",
+      "name": "Tenfold Learner",
+      "description": "Successfully complete 10 full quizzes.",
+      "icon": "Trophy",
+      "category": "Dedication",
+      "xp_reward": 150,
+      "coin_reward": 10,
+      "id": "6ae9aaf50a917ab362f438f3",
+      "_id": "6ae9aaf50a917ab362f438f3"
+    },
+    {
+      "code": "correct_100",
+      "name": "Centurion Mind",
+      "description": "Answer 100 questions correctly across all subjects.",
+      "icon": "CheckCircle2",
+      "category": "Mastery",
+      "xp_reward": 250,
+      "coin_reward": 15,
+      "id": "6ae9aaf50a917ab362f438f4",
+      "_id": "6ae9aaf50a917ab362f438f4"
+    },
+    {
+      "code": "streak_7",
+      "name": "Unstoppable Momentum",
+      "description": "Maintain a 7-day daily learning streak.",
+      "icon": "Flame",
+      "category": "Discipline",
+      "xp_reward": 300,
+      "coin_reward": 20,
+      "id": "6ae9aaf50a917ab362f438f5",
+      "_id": "6ae9aaf50a917ab362f438f5"
+    },
+    {
+      "code": "perfect_score",
+      "name": "Flawless Execution",
+      "description": "Score 100% on any timed quiz and earn ranking coins.",
+      "icon": "Star",
+      "category": "Excellence",
+      "xp_reward": 200,
+      "coin_reward": 10,
+      "id": "6ae9aaf50a917ab362f438f6",
+      "_id": "6ae9aaf50a917ab362f438f6"
+    },
+    {
+      "code": "clever_champion",
+      "name": "Clever",
+      "description": "Top 1st place in the Monthly Leaderboard Tournament (5 Stars).",
+      "icon": "Crown",
+      "category": "Hall of Fame",
+      "xp_reward": 1000,
+      "coin_reward": 900,
+      "id": "6ae9aaf50a917ab362f438f7",
+      "_id": "6ae9aaf50a917ab362f438f7"
+    }
+  ],
+  "daily_quests": [
+    {
+      "code": "complete_2_quizzes",
+      "title": "Complete 2 Quizzes",
+      "description": "Take and complete any two quizzes today.",
+      "target": 2,
+      "xp_reward": 50,
+      "coin_reward": 5,
+      "is_active": true,
+      "id": "6ae9aaf50a917ab362f438f8",
+      "_id": "6ae9aaf50a917ab362f438f8"
+    },
+    {
+      "code": "score_80_percent",
+      "title": "High Scorer",
+      "description": "Achieve at least 80% accuracy on a quiz.",
+      "target": 1,
+      "xp_reward": 40,
+      "coin_reward": 3,
+      "is_active": true,
+      "id": "6ae9aaf50a917ab362f438f9",
+      "_id": "6ae9aaf50a917ab362f438f9"
+    },
+    {
+      "code": "discipline_tasks_3",
+      "title": "Daily Discipline",
+      "description": "Complete 3 discipline tasks on your planner.",
+      "target": 3,
+      "xp_reward": 30,
+      "coin_reward": 2,
+      "is_active": true,
+      "id": "6ae9aaf50a917ab362f438fa",
+      "_id": "6ae9aaf50a917ab362f438fa"
+    },
+    {
+      "code": "answer_15_correct",
+      "title": "Accuracy Surge",
+      "description": "Answer 15 total questions correctly today.",
+      "target": 15,
+      "xp_reward": 60,
+      "coin_reward": 5,
+      "is_active": true,
+      "id": "6ae9aaf50a917ab362f438fb",
+      "_id": "6ae9aaf50a917ab362f438fb"
+    }
+  ],
+  "video_resources": [],
+  "user_profiles": [
+    {
+      "user_id": "670e00000000000000000001",
+      "bio": "Lead System Architect & Content Administrator at Quizora.",
+      "level": 30,
+      "total_xp": 90100,
+      "ranking_coins": 5010,
+      "current_streak": 45,
+      "longest_streak": 60,
+      "completed_quizzes_count": 250,
+      "total_questions_answered": 2500,
+      "total_correct_answers": 2480,
+      "total_incorrect_answers": 20,
+      "average_score": 99.2,
+      "privacy_settings": {
+        "show_email": false,
+        "show_phone": false,
+        "show_activity": true,
+        "allow_invitations": true
+      },
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438d2",
+      "_id": "6ae9aaf50a917ab362f438d2",
+      "last_active_date": "2026-11-04"
+    },
+    {
+      "user_id": "6aeb42da5d229eee1c3889f4",
+      "bio": "Joined QUIZORA through Google Identity.",
+      "level": 1,
+      "total_xp": 50,
+      "ranking_coins": 0,
+      "current_streak": 1,
+      "longest_streak": 1,
+      "last_active_date": "2026-11-04",
+      "completed_quizzes_count": 0,
+      "total_questions_answered": 0,
+      "total_correct_answers": 0,
+      "total_incorrect_answers": 0,
+      "average_score": 0.0,
+      "privacy_settings": {
+        "show_email": false,
+        "show_phone": false,
+        "show_activity": true,
+        "allow_invitations": true
+      },
+      "created_at": "2026-11-04T14:36:10.127188+00:00",
+      "updated_at": "2026-11-04T14:36:10.127188+00:00",
+      "id": "6aeb42da5d229eee1c3889f5",
+      "_id": "6aeb42da5d229eee1c3889f5"
+    }
+  ],
+  "monthly_rewards": [],
+  "friends": [],
+  "friend_requests": [],
+  "quiz_attempts": [
+    {
+      "user_id": "670e00000000000000000001",
+      "category_id": "670e10000000000000000012",
+      "topic_id": "670e20000000000000000017",
+      "difficulty": "adaptive",
+      "question_ids": [
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e5"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e4"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e4"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e4"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e4"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e5"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e5"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e6"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e6"
+        },
+        {
+          "__oid__": "6ae9aaf50a917ab362f438e6"
+        }
+      ],
+      "question_count": 10,
+      "selection_mode": "random",
+      "time_limit_minutes": 15,
+      "status": "in_progress",
+      "current_stage": 1,
+      "started_at": "2026-11-04T10:37:49.981594+00:00",
+      "saved_answers": {},
+      "score_percentage": 0.0,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "unanswered_count": 0,
+      "duration_seconds": 0,
+      "earned_xp": 0,
+      "earned_coins": 0,
+      "coins_rewarded": false,
+      "id": "6aeb0afd5d229eee1c3889f3",
+      "_id": "6aeb0afd5d229eee1c3889f3"
+    }
+  ],
+  "messages": [],
+  "user_achievements": [],
+  "discipline_tasks": [],
+  "quiz_rooms": [
+    {
+      "room_code": "QZ-YNFE",
+      "host_id": "670e00000000000000000001",
+      "topic_id": "670e20000000000000000001",
+      "topic_name": "Python & Backend",
+      "difficulty": "medium",
+      "question_count": 10,
+      "time_limit_minutes": 15,
+      "status": "waiting",
+      "participants": [
+        {
+          "user_id": "670e00000000000000000001",
+          "username": "quizora_admin",
+          "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=admin_vance",
+          "level": 30,
+          "is_ready": true,
+          "score": 0,
+          "correct_count": 0,
+          "completed": false,
+          "duration_seconds": 0
+        }
+      ],
+      "created_at": "2026-11-04T10:37:36.349896+00:00",
+      "id": "6aeb0af05d229eee1c3889f2",
+      "_id": "6aeb0af05d229eee1c3889f2"
+    }
+  ]
+}

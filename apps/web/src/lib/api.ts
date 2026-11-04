@@ -3,7 +3,18 @@
  * Provides full REST endpoint access with JWT token handling and graceful fallbacks.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+function getApiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined") {
+    // In production or on Vercel (e.g. demodey-6q51.vercel.app), use relative path to same origin
+    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+      return "/api/v1";
+    }
+  }
+  return "http://localhost:8000/api/v1";
+}
 
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -27,7 +38,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     ...(options.headers || {}),
   };
 
-  const url = `${API_BASE}${endpoint}`;
+  const apiBase = getApiBase();
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${apiBase}${cleanEndpoint}`;
   try {
     const res = await fetch(url, { ...options, headers });
     if (!res.ok) {
