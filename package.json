@@ -1,0 +1,22 @@
+{
+  "name": "quizora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QUIZORA — AI-Powered Quiz, Learning, Gamification & Social Learning SaaS Platform",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "cd apps/api && python3 -m uvicorn app.main:app --reload --port 8000",
+    "build:web": "npm --prefix apps/web run build",
+    "start:web": "npm --prefix apps/web run start",
+    "test:api": "cd apps/api && python3 -m pytest",
+    "test:web": "npm --prefix apps/web run test"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

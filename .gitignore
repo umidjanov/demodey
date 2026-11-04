@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+apps/web/node_modules/
+
+# Next.js build output
+.next/
+apps/web/.next/
+out/
+build/
+dist/
+
+# Python Virtual Environment
+venv/
+apps/api/venv/
+env/
+.env
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDEs & Editors
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Large zip packages
+quizora_windows.zip
+*.zip
