@@ -123,7 +123,7 @@ export default function RegisterPage() {
                     required
                     value={formData.first_name}
                     onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                    placeholder={language === "uz" ? "Azizbek" : "Alex"}
+                    placeholder={language === "uz" ? "Ismingizni kiriting" : language === "ru" ? "Введите имя" : "Enter your first name"}
                     className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B] focus:bg-white transition-all"
                   />
                 </div>
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                     required
                     value={formData.last_name}
                     onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                    placeholder={language === "uz" ? "Rahimov" : "Learner"}
+                    placeholder={language === "uz" ? "Familiyangizni kiriting" : language === "ru" ? "Введите фамилию" : "Enter your last name"}
                     className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B] focus:bg-white transition-all"
                   />
                 </div>

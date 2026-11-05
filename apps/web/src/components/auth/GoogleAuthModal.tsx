@@ -125,7 +125,7 @@ export function GoogleAuthModal({ isOpen, onClose, onSuccess }: GoogleAuthModalP
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="masalan: fayzulloh@gmail.com"
+              placeholder={language === "uz" ? "masalan: user@gmail.com" : "e.g. user@gmail.com"}
               className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B] focus:bg-white transition-all"
             />
           </div>
@@ -140,7 +140,7 @@ export function GoogleAuthModal({ isOpen, onClose, onSuccess }: GoogleAuthModalP
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Fayzulloh"
+                placeholder={language === "uz" ? "Ismingizni kiriting" : "Your first name"}
                 className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B] focus:bg-white transition-all"
               />
             </div>
@@ -152,7 +152,7 @@ export function GoogleAuthModal({ isOpen, onClose, onSuccess }: GoogleAuthModalP
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Umidjanov"
+                placeholder={language === "uz" ? "Familiyangizni kiriting" : "Your last name"}
                 className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B] focus:bg-white transition-all"
               />
             </div>

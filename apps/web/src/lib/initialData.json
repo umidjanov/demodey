@@ -6,12 +6,12 @@
       "email": "admin@quizora.com",
       "username": "quizora_admin",
       "hashed_password": "$2b$12$R/HfRzpW.HqbdMOzWYbWOuxR96a/q9.GS1Wz1BfMycp2miZiVC4.C",
-      "first_name": "Fayzulloh",
-      "last_name": "Umidjanov",
+      "first_name": "Admin",
+      "last_name": "Quizora",
       "role": "admin",
       "is_active": true,
       "is_verified": true,
-      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=admin_fayzulloh",
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=quizora_admin",
       "created_at": "2026-11-03T09:35:48.942576+00:00",
       "last_login_at": "2026-11-04T10:35:07.025954+00:00"
     }

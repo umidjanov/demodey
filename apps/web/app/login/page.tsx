@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { useLanguage } from "@/src/context/LanguageContext";
+import { getStoredUser } from "@/src/lib/api";
 import { Sparkles, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { GoogleAuthModal } from "@/src/components/auth/GoogleAuthModal";
 
@@ -25,7 +26,12 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push("/dashboard");
+      const stored = getStoredUser();
+      if (stored?.role === "admin" || email.toLowerCase().trim() === "admin@quizora.com") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.message || (language === "uz" ? "Pochta yoki parol noto'g'ri." : "Invalid credentials."));
     } finally {

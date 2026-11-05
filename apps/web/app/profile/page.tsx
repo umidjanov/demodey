@@ -161,7 +161,8 @@ export default function ProfilePage() {
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] focus:outline-none focus:border-[#07858B]"
+                  placeholder={language === "uz" ? "Ismingizni kiriting" : language === "ru" ? "Введите имя" : "Enter first name"}
+                  className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B]"
                 />
               </div>
 
@@ -174,7 +175,8 @@ export default function ProfilePage() {
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] focus:outline-none focus:border-[#07858B]"
+                  placeholder={language === "uz" ? "Familiyangizni kiriting" : language === "ru" ? "Введите фамилию" : "Enter last name"}
+                  className="w-full bg-[#F7F9FC] border border-[#E8EDF2] rounded-xl px-4 py-2.5 text-sm text-[#182536] placeholder-[#7B8794] focus:outline-none focus:border-[#07858B]"
                 />
               </div>
             </div>

@@ -289,17 +289,25 @@ export async function getAllPlatformLearners(): Promise<any[]> {
     const comm = await api.getCommunityUsers().catch(() => []);
     const localUsers = getLocalRegisteredUsers();
     const deletedIds = getDeletedUserIds();
+    const currentUser = getStoredUser();
+    const isViewerAdmin = currentUser?.role === "admin";
 
     const map = new Map<string, any>();
 
     (Array.isArray(comm) ? comm : []).forEach((u: any) => {
       if (u?.id && !deletedIds.includes(u.id)) {
+        if (!isViewerAdmin && (u.role === "admin" || u.email === "admin@quizora.com")) {
+          return;
+        }
         map.set(u.id, u);
       }
     });
 
     localUsers.forEach((u: any) => {
       if (u?.id && !deletedIds.includes(u.id)) {
+        if (!isViewerAdmin && (u.role === "admin" || u.email === "admin@quizora.com")) {
+          return;
+        }
         const existing = map.get(u.id) || {};
         map.set(u.id, {
           id: u.id,
