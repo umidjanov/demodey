@@ -1,19 +1,6 @@
 {
   "users": [
     {
-      "id": "u_ah3ikadv",
-      "email": "student1@gmail.com",
-      "password": "Password123!",
-      "username": "student1",
-      "first_name": "Bekzod",
-      "last_name": "Aliyev",
-      "phone_number": "",
-      "role": "user",
-      "is_active": true,
-      "created_at": "2026-11-05T12:40:23.771Z",
-      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=student1"
-    },
-    {
       "id": "670e00000000000000000001",
       "_id": "670e00000000000000000001",
       "email": "admin@quizora.com",
@@ -27,54 +14,18 @@
       "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=quizora_admin",
       "created_at": "2026-11-03T09:35:48.942576+00:00",
       "last_login_at": "2026-11-04T10:35:07.025954+00:00"
-    },
-    {
-      "id": "u_kamola",
-      "email": "kamola@gmail.com",
-      "username": "kamola",
-      "first_name": "Kamola",
-      "last_name": "Rahimova",
-      "phone_number": "+998909998877",
-      "role": "user",
-      "is_active": true,
-      "created_at": "2026-11-05T13:00:00.000Z"
-    },
-    {
-      "id": "u_i0ie8ur6",
-      "email": "shoxrux@gmail.com",
-      "password": "Password123!",
-      "username": "shoxrux",
-      "first_name": "Shoxrux",
-      "last_name": "Mirzayev",
-      "phone_number": "+998931112233",
-      "role": "user",
-      "is_active": true,
-      "created_at": "2026-11-05T13:05:17.562Z",
-      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=shoxrux"
     }
   ],
   "profiles": [
     {
-      "id": "p_u_ah3ikadv",
-      "user_id": "u_ah3ikadv",
-      "level": 1,
-      "level_title": "Boshlang'ich",
-      "total_xp": 0,
-      "ranking_coins": 0,
-      "coins": 0,
-      "current_streak": 1,
-      "completed_quizzes_count": 0,
-      "average_score": 0,
-      "total_questions_answered": 0,
-      "total_correct_answers": 0,
-      "total_incorrect_answers": 0
-    },
-    {
+      "id": "prof_admin",
       "user_id": "670e00000000000000000001",
       "bio": "Lead System Architect & Content Administrator at Quizora.",
       "level": 30,
+      "level_title": "Grand Master",
       "total_xp": 90100,
       "ranking_coins": 5010,
+      "coins": 5010,
       "current_streak": 45,
       "longest_streak": 60,
       "completed_quizzes_count": 250,
@@ -88,40 +39,7 @@
         "show_activity": true,
         "allow_invitations": true
       },
-      "created_at": "2026-11-03T09:35:48.942576+00:00",
-      "id": "6ae9aaf50a917ab362f438d2",
-      "_id": "6ae9aaf50a917ab362f438d2",
-      "last_active_date": "2026-11-04"
-    },
-    {
-      "id": "p_u_kamola",
-      "user_id": "u_kamola",
-      "level": 1,
-      "level_title": "Bilimdon",
-      "total_xp": 0,
-      "ranking_coins": 0,
-      "coins": 0,
-      "current_streak": 1,
-      "completed_quizzes_count": 0,
-      "average_score": 0,
-      "total_questions_answered": 0,
-      "total_correct_answers": 0,
-      "total_incorrect_answers": 0
-    },
-    {
-      "id": "p_u_i0ie8ur6",
-      "user_id": "u_i0ie8ur6",
-      "level": 1,
-      "level_title": "Boshlang'ich",
-      "total_xp": 0,
-      "ranking_coins": 0,
-      "coins": 0,
-      "current_streak": 1,
-      "completed_quizzes_count": 0,
-      "average_score": 0,
-      "total_questions_answered": 0,
-      "total_correct_answers": 0,
-      "total_incorrect_answers": 0
+      "created_at": "2026-11-03T09:35:48.942576+00:00"
     },
     {
       "user_id": "[object Object]",
@@ -154,6 +72,16 @@
   "messages": [],
   "discipline_tasks": [],
   "deleted_user_ids": [
-    "u_eknm2fda"
+    "u_ah3ikadv",
+    "u_kamola",
+    "u_i0ie8ur6",
+    "u_eknm2fda",
+    "student1",
+    "kamola",
+    "shoxrux",
+    "student1@gmail.com",
+    "kamola@gmail.com",
+    "shoxrux@gmail.com",
+    "u_832569w7"
   ]
 }

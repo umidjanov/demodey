@@ -9,6 +9,19 @@ const DB_CANDIDATE_PATHS = [
   path.join(process.cwd(), "..", "api", "quizora_store.json"),
 ];
 
+const LEGACY_PURGED_USER_IDS = [
+  "u_ah3ikadv",
+  "u_kamola",
+  "u_i0ie8ur6",
+  "u_eknm2fda",
+  "student1",
+  "kamola",
+  "shoxrux",
+  "student1@gmail.com",
+  "kamola@gmail.com",
+  "shoxrux@gmail.com",
+];
+
 function loadPersistedStore(): Partial<GlobalStore> | null {
   const merged: {
     users: any[];
@@ -21,7 +34,7 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
     profiles: [],
     messages: [],
     discipline_tasks: [],
-    deleted_user_ids: [],
+    deleted_user_ids: [...LEGACY_PURGED_USER_IDS],
   };
 
   const usersMap = new Map<string, any>();
@@ -51,9 +64,19 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
 
         uList.forEach((u: any) => {
           const id = u.id || (u._id && (u._id.__oid__ || u._id)) || u.email;
+          const email = (u.email || "").toLowerCase();
+          const username = (u.username || "").toLowerCase();
+
           if (id && !usersMap.has(String(id))) {
-            if (merged.deleted_user_ids.includes(String(id))) {
-              return; // Do NOT load deleted user
+            if (
+              merged.deleted_user_ids.includes(String(id)) ||
+              merged.deleted_user_ids.includes(email) ||
+              merged.deleted_user_ids.includes(username) ||
+              LEGACY_PURGED_USER_IDS.includes(String(id)) ||
+              LEGACY_PURGED_USER_IDS.includes(email) ||
+              LEGACY_PURGED_USER_IDS.includes(username)
+            ) {
+              return; // Do NOT load purged legacy users!
             }
             usersMap.set(String(id), {
               ...u,
@@ -155,20 +178,48 @@ function getStore(): GlobalStore {
   if (!global.__QUIZORA_STORE__) {
     const raw = initialData as any;
     const persisted = loadPersistedStore();
-    const deletedUserIds = persisted?.deleted_user_ids || [];
+    const deletedUserIds = Array.from(
+      new Set([...LEGACY_PURGED_USER_IDS, ...(persisted?.deleted_user_ids || [])])
+    );
 
-    const baseUsers = (raw.users || []).map((u: any) => ({
-      ...u,
-      id: u.id || u._id || "670e00000000000000000001",
-      role: u.role || (u.email === "admin@quizora.com" ? "admin" : "user"),
-      is_active: u.is_active ?? true,
-    }));
+    const baseUsers = (raw.users || [])
+      .filter((u: any) => {
+        const id = String(u.id || u._id || "");
+        const email = String(u.email || "").toLowerCase();
+        const username = String(u.username || "").toLowerCase();
+        return (
+          email === "admin@quizora.com" ||
+          (!deletedUserIds.includes(id) && !deletedUserIds.includes(email) && !deletedUserIds.includes(username))
+        );
+      })
+      .map((u: any) => ({
+        ...u,
+        id: u.id || u._id || "670e00000000000000000001",
+        role: u.role || (u.email === "admin@quizora.com" ? "admin" : "user"),
+        is_active: u.is_active ?? true,
+      }));
 
-    const persistedUsers = persisted?.users || [];
+    const persistedUsers = (persisted?.users || []).filter((u: any) => {
+      const id = String(u.id || u._id || "");
+      const email = String(u.email || "").toLowerCase();
+      const username = String(u.username || "").toLowerCase();
+      return (
+        email === "admin@quizora.com" ||
+        (!deletedUserIds.includes(id) && !deletedUserIds.includes(email) && !deletedUserIds.includes(username))
+      );
+    });
+
     const usersMap = new Map();
     [...baseUsers, ...persistedUsers].forEach((u) => {
-      if (!deletedUserIds.includes(String(u.id))) {
-        usersMap.set(String(u.id), u);
+      const idStr = String(u.id);
+      const email = String(u.email || "").toLowerCase();
+      const username = String(u.username || "").toLowerCase();
+      if (
+        !deletedUserIds.includes(idStr) &&
+        !deletedUserIds.includes(email) &&
+        !deletedUserIds.includes(username)
+      ) {
+        usersMap.set(idStr, u);
       }
     });
 
@@ -181,8 +232,9 @@ function getStore(): GlobalStore {
     const persistedProfiles = persisted?.profiles || [];
     const profilesMap = new Map();
     [...baseProfiles, ...persistedProfiles].forEach((p) => {
-      if (!deletedUserIds.includes(String(p.user_id))) {
-        profilesMap.set(String(p.user_id), p);
+      const uId = String(p.user_id);
+      if (!deletedUserIds.includes(uId)) {
+        profilesMap.set(uId, p);
       }
     });
 
@@ -234,9 +286,38 @@ function getStore(): GlobalStore {
       });
     }
 
-    // Persist to /tmp so warm serverless instances have immediate access
     savePersistedStore(global.__QUIZORA_STORE__);
   }
+
+  // Always enforce legacy purged filter on existing global store
+  if (global.__QUIZORA_STORE__) {
+    const deleted = global.__QUIZORA_STORE__.deleted_user_ids || [];
+    global.__QUIZORA_STORE__.users = global.__QUIZORA_STORE__.users.filter((u) => {
+      const id = String(u.id);
+      const email = String(u.email || "").toLowerCase();
+      const username = String(u.username || "").toLowerCase();
+      if (email === "admin@quizora.com" || id === "670e00000000000000000001") return true;
+      if (
+        deleted.includes(id) ||
+        deleted.includes(email) ||
+        deleted.includes(username) ||
+        LEGACY_PURGED_USER_IDS.includes(id) ||
+        LEGACY_PURGED_USER_IDS.includes(email) ||
+        LEGACY_PURGED_USER_IDS.includes(username)
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    global.__QUIZORA_STORE__.profiles = global.__QUIZORA_STORE__.profiles.filter((p) => {
+      const uId = String(p.user_id);
+      if (uId === "670e00000000000000000001") return true;
+      if (deleted.includes(uId) || LEGACY_PURGED_USER_IDS.includes(uId)) return false;
+      return true;
+    });
+  }
+
   return global.__QUIZORA_STORE__;
 }
 
@@ -1096,11 +1177,16 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       return NextResponse.json({ success: true, deleted_id: userId }, { headers: corsHeaders() });
     }
 
-    if (pathname === "admin/purge-fake-users" && method === "POST") {
+    if ((pathname === "admin/purge-fake-users" || pathname === "admin/purge-all-users") && method === "POST") {
+      const nonAdminIds = store.users.filter((u) => u.role !== "admin").map((u) => String(u.id));
+      store.deleted_user_ids = Array.from(new Set([...(store.deleted_user_ids || []), ...LEGACY_PURGED_USER_IDS, ...nonAdminIds]));
       store.users = store.users.filter((u) => u.role === "admin");
       store.profiles = store.profiles.filter((p) => p.user_id === "670e00000000000000000001");
+      store.messages = [];
+      store.discipline_tasks = [];
+      store.attempts = store.attempts.filter((a) => a.user_id === "670e00000000000000000001");
       savePersistedStore(store);
-      return NextResponse.json({ message: "Barcha sinov foydalanuvchilari butunlay tozalandi." }, { headers: corsHeaders() });
+      return NextResponse.json({ message: "Barcha eski foydalanuvchilar butunlay tozalandi." }, { headers: corsHeaders() });
     }
 
     // --- LEADERBOARD & GAMIFICATION ---

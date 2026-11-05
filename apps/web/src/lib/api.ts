@@ -119,13 +119,28 @@ export function saveLocalUser(user: any) {
   } catch {}
 }
 
+export const LEGACY_PURGED_USER_IDS = [
+  "u_ah3ikadv",
+  "u_kamola",
+  "u_i0ie8ur6",
+  "u_eknm2fda",
+  "student1",
+  "kamola",
+  "shoxrux",
+  "student1@gmail.com",
+  "kamola@gmail.com",
+  "shoxrux@gmail.com",
+];
+
 export function getDeletedUserIds(): string[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return LEGACY_PURGED_USER_IDS;
   try {
     const raw = localStorage.getItem("quizora_deleted_user_ids");
-    return raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    const merged = Array.from(new Set([...LEGACY_PURGED_USER_IDS, ...(Array.isArray(parsed) ? parsed : [])]));
+    return merged;
   } catch {
-    return [];
+    return LEGACY_PURGED_USER_IDS;
   }
 }
 
