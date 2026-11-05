@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quizora — 8 Sahifalik Rasmiy Taqdimot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(232, 237, 242, 0.8);
+    }
+    .glass-dark {
+      background: rgba(24, 37, 54, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px) scale(0.99);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  </style>
+</head>
+<body class="bg-[#F7F9FC] text-[#182536] min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-[#07858B] selection:text-white">
+
+  <!-- Top Progress Bar -->
+  <div class="fixed top-0 left-0 w-full h-1.5 bg-[#E8EDF2] z-50">
+    <div id="progressBar" class="h-full bg-gradient-to-r from-[#07858B] via-teal-500 to-[#F5B83D] transition-all duration-300 w-1/8"></div>
+  </div>
+
+  <!-- Header Bar -->
+  <header class="w-full max-w-6xl mx-auto px-6 pt-6 flex items-center justify-between z-40">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-[#07858B] flex items-center justify-center text-white font-black text-xl shadow-md shadow-[#07858B]/20 font-outfit">
+        Q
+      </div>
+      <div>
+        <span class="text-xl font-black text-[#182536] tracking-tight font-outfit">QUIZORA</span>
+        <span class="text-xs ml-2 px-2.5 py-0.5 rounded-full bg-teal-50 text-[#07858B] font-bold border border-[#07858B]/20">Presentation Deck</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="px-4 py-1.5 rounded-xl bg-white border border-[#E8EDF2] text-xs font-extrabold text-[#7B8794] shadow-xs">
+        Sahifa: <span id="currentSlideNum" class="text-[#07858B] font-black text-sm">1</span> / 8
+      </div>
+      <button onclick="toggleFullScreen()" class="p-2 rounded-xl bg-white border border-[#E8EDF2] text-[#7B8794] hover:text-[#182536] hover:bg-slate-50 transition-all text-xs font-semibold shadow-xs" title="To'liq ekran">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Slide Container -->
+  <main class="w-full max-w-6xl mx-auto px-6 py-6 flex-1 flex items-center justify-center">
+
+    <!-- SLIDE 1: Muqova va Missiya -->
+    <div class="slide active w-full flex-col items-center justify-center text-center space-y-6 max-w-4xl mx-auto py-8">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-50 border border-[#07858B]/30 text-[#07858B] text-xs font-extrabold uppercase tracking-widest shadow-xs">
+        ✨ Rasmiy Taqdimot · 2026
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-black text-[#182536] font-outfit tracking-tight leading-tight">
+        Yangi Avlod Ta'lim va Intellektual Sinov Ekotizimi
+      </h1>
+      <p class="text-base sm:text-lg text-[#7B8794] max-w-2xl mx-auto leading-relaxed">
+        <b>Quizora</b> — bilimlarni sinovdan o'tkazish, sun'iy intellekt (AI) orqali chuqur tahlil qilish va sog'lom geymifikatsiya orqali o'quvchilarni ruhlantirish platformasi.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full pt-6">
+        <div class="glass p-5 rounded-3xl text-left border border-teal-100 shadow-sm space-y-2">
+          <div class="w-10 h-10 rounded-2xl bg-teal-50 text-[#07858B] flex items-center justify-center font-bold text-lg">🎯</div>
+          <h4 class="font-bold text-[#182536] text-sm">Moslashuvchan Sinov</h4>
+          <p class="text-xs text-[#7B8794]">O'quvchi darajasiga qarab avtomatik moslashuvchi intellektual testlar.</p>
+        </div>
+        <div class="glass p-5 rounded-3xl text-left border border-amber-100 shadow-sm space-y-2">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 text-[#F5B83D] flex items-center justify-center font-bold text-lg">🤖</div>
+          <h4 class="font-bold text-[#182536] text-sm">Sun'iy Intellekt Tahlili</h4>
+          <p class="text-xs text-[#7B8794]">Nega xato bo'lganini tushuntirib, to'g'ri o'rganish rejasini tuzib beradi.</p>
+        </div>
+        <div class="glass p-5 rounded-3xl text-left border border-blue-100 shadow-sm space-y-2">
+          <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg">⚔️</div>
+          <h4 class="font-bold text-[#182536] text-sm">Multiplayer Duellar</h4>
+          <p class="text-xs text-[#7B8794]">Do'stlar bilan jonli xonalarda real-vaqt rejimida aql jangi olib borish.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Texnologiya va Arxitektura -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">2-Sahifa · Texnologik Baza</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Tizim Arxitekturasi va Xavfsizligi</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="glass p-6 rounded-3xl space-y-4 border border-[#E8EDF2]">
+          <h3 class="font-extrabold text-base text-[#182536] flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-teal-50 text-[#07858B] flex items-center justify-center text-sm">💻</span>
+            Zamonaviy Frontend Texnologiyalari
+          </h3>
+          <ul class="space-y-2.5 text-xs text-[#486581]">
+            <li class="flex items-center gap-2">✅ <b>Next.js 15 (App Router):</b> Ultra-tezkor sahifa yuklanishi va dinamik marshrutlash.</li>
+            <li class="flex items-center gap-2">✅ <b>React 19 & TailwindCSS:</b> Ergonomik dizayn tizimi, premium mikro-animatsiyalar.</li>
+            <li class="flex items-center gap-2">✅ <b>DiceBear Bottts:</b> Har bir o'quvchi uchun avtomatik individual robot avatarlar.</li>
+            <li class="flex items-center gap-2">✅ <b>Real-Time Event Bus:</b> Oyna va tablararo xabarlashuv hamda ma'lumotlar yangilanishi.</li>
+          </ul>
+        </div>
+
+        <div class="glass p-6 rounded-3xl space-y-4 border border-[#E8EDF2]">
+          <h3 class="font-extrabold text-base text-[#182536] flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">⚡</span>
+            Kuchli Backend va Ma'lumotlar Doimiyligi
+          </h3>
+          <ul class="space-y-2.5 text-xs text-[#486581]">
+            <li class="flex items-center gap-2">🛡️ <b>FastAPI + Next.js Serverless:</b> Yuqori unumdorlik va nollik kechikish (low-latency).</li>
+            <li class="flex items-center gap-2">🔑 <b>HMAC-SHA256 JWT & Google Auth:</b> Kriptografik xavfsiz sessiya va login.</li>
+            <li class="flex items-center gap-2">💾 <b>Avtomatik Faylli DB:</b> Vercel/Docker muhitlarida uzluksiz ishlovchi JSON saqlash ombori.</li>
+            <li class="flex items-center gap-2">🚫 <b>Kaskadli Tozalash:</b> O'chirilgan foydalanuvchilarning bazadan 100% yo'qolish kafolati.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Dashboard & Shaxsiy O'sish -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">3-Sahifa · Boshqaruv Markazi</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Foydalanuvchi Shaxsiy Kabineti (Dashboard)</h2>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+        <div class="bg-white p-4 rounded-3xl border border-[#E8EDF2] text-center shadow-xs">
+          <div class="text-2xl mb-1">🎖️</div>
+          <div class="text-xl font-black text-[#182536]">Level 1 - 30</div>
+          <div class="text-[11px] font-bold text-[#7B8794]">Boshlang'ichdan Grand Mastergacha</div>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-[#E8EDF2] text-center shadow-xs">
+          <div class="text-2xl mb-1">⚡</div>
+          <div class="text-xl font-black text-[#07858B]">Tajriba (XP)</div>
+          <div class="text-[11px] font-bold text-[#7B8794]">Har bir to'g'ri javob uchun ball</div>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-[#E8EDF2] text-center shadow-xs">
+          <div class="text-2xl mb-1">🪙</div>
+          <div class="text-xl font-black text-[#F5B83D]">$RC Coins</div>
+          <div class="text-[11px] font-bold text-[#7B8794]">Peshqadamlar tangalari</div>
+        </div>
+        <div class="bg-white p-4 rounded-3xl border border-[#E8EDF2] text-center shadow-xs">
+          <div class="text-2xl mb-1">🔥</div>
+          <div class="text-xl font-black text-[#FF9B45]">Kunlik Streak</div>
+          <div class="text-[11px] font-bold text-[#7B8794]">Uzluksiz ta'lim intizomi</div>
+        </div>
+      </div>
+
+      <div class="glass p-6 rounded-3xl border border-[#E8EDF2] space-y-3">
+        <h4 class="font-bold text-sm text-[#182536]">Kunlik Kvestlar va Maqsadlar (Daily Quests):</h4>
+        <p class="text-xs text-[#7B8794] leading-relaxed">
+          O'quvchi har kuni saytga kirganda unga yangi topshiriqlar beriladi: masalan, <b>"2 ta testni to'liq yakunlash"</b>, <b>"80% dan yuqori aniqlik ko'rsatish"</b>, yoki <b>"15 ta savolga xatosiz javob topish"</b>. Topshiriq bajarilgach, qo'shimcha tanga va XP yutib olinadi.
+        </p>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Fanlar va Moslashuvchan Testlar -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">4-Sahifa · Ta'lim Moduli</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Fanlar, Mavzular va Moslashuvchanlik</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold">💻</div>
+          <h4 class="font-bold text-sm text-[#182536]">IT & Dasturlash</h4>
+          <p class="text-xs text-[#7B8794]">Python 3.12, TypeScript, React 19, Algoritmlar va Big-O tahlili.</p>
+        </div>
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">🇬🇧</div>
+          <h4 class="font-bold text-sm text-[#182536]">Ingliz Tili (IELTS)</h4>
+          <p class="text-xs text-[#7B8794]">Grammatika, Inversiya, murakkab sintaksis va idiomatik iboralar.</p>
+        </div>
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 text-[#F5B83D] flex items-center justify-center font-bold">🇺🇿</div>
+          <h4 class="font-bold text-sm text-[#182536]">Ona Tili va Adabiyot</h4>
+          <p class="text-xs text-[#7B8794]">Morfologiya, imlo me'yorlari, Alisher Navoiy va Jadidlar adabiyoti.</p>
+        </div>
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">🏛️</div>
+          <h4 class="font-bold text-sm text-[#182536]">O'zbekiston Tarixi</h4>
+          <p class="text-xs text-[#7B8794]">Qadimgi Turon, Amir Temur saltanati, xonliklar va Mustaqillik davri.</p>
+        </div>
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">🌍</div>
+          <h4 class="font-bold text-sm text-[#182536]">Jahon Tarixi</h4>
+          <p class="text-xs text-[#7B8794]">Rim imperiyasi, BMT tarixi, Jahon urushlari va yangi davr.</p>
+        </div>
+        <div class="bg-white p-5 rounded-3xl border border-[#E8EDF2] space-y-3 shadow-xs">
+          <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold">🔢</div>
+          <h4 class="font-bold text-sm text-[#182536]">Matematika (Adaptive)</h4>
+          <p class="text-xs text-[#7B8794]">Arifmetikadan tortib to oliy matematika va integrallargacha 5 bosqich.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Sun'iy Intellekt Tahlili -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">5-Sahifa · AI Aqlli Tahlili</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Sun'iy Intellekt va Natijalar Tahlili</h2>
+      </div>
+
+      <div class="bg-gradient-to-br from-slate-900 to-[#182536] text-white p-6 sm:p-8 rounded-3xl shadow-xl space-y-4">
+        <div class="flex items-center gap-3 border-b border-slate-700/60 pb-4">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500"></div>
+          <span class="text-xs text-slate-400 font-mono">Quizora AI Smart Feedback Engine</span>
+        </div>
+
+        <div class="space-y-4 text-xs sm:text-sm font-mono leading-relaxed">
+          <p class="text-red-400">❌ Sizning javobingiz: B) 1939-yil (Noto'g'ri)</p>
+          <p class="text-emerald-400">✅ To'g'ri javob: A) 1945-yilda BMT tuzilgan.</p>
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 text-slate-300">
+            <span class="text-[#F5B83D] font-bold">💡 AI Tahlilchi izohi:</span>
+            <p>1939-yilda Ikkinchi jahon urushi boshlangan. Birlashgan Millatlar Tashkiloti esa urush yakunlangach, 1945-yil 24-oktabrda San-Fransisko konferensiyasida tashkil etilgan.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-xs text-[#7B8794]">
+        O'quvchi xato qilgan savollarining qoidasini bir zumda tushunadi va o'sha xatoni qayta takrorlamaydi.
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Duellar, Chat va Mini-o'yinlar -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">6-Sahifa · Ijtimoiy Raqobat</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Duellar, Maxfiy Chat va Mini-O'yinlar</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+        <div class="glass p-6 rounded-3xl space-y-3 border border-[#E8EDF2]">
+          <div class="text-3xl">⚔️</div>
+          <h4 class="font-extrabold text-sm text-[#182536]">Multiplayer Xonalar</h4>
+          <p class="text-xs text-[#7B8794]">Do'stingizga xona kodini yuboring va bir xil savollarga tezlikda kim birinchi javob berishini aniqlang.</p>
+        </div>
+
+        <div class="glass p-6 rounded-3xl space-y-3 border border-[#E8EDF2]">
+          <div class="text-3xl">💬</div>
+          <h4 class="font-extrabold text-sm text-[#182536]">1-to-1 Maxfiy Chat</h4>
+          <p class="text-xs text-[#7B8794]">Faqat ikkita foydalanuvchi orasidagi to'liq xavfsiz chat. Hech kim begona xabarlarni ko'ra olmaydi.</p>
+        </div>
+
+        <div class="glass p-6 rounded-3xl space-y-3 border border-[#E8EDF2]">
+          <div class="text-3xl">🕹️</div>
+          <h4 class="font-extrabold text-sm text-[#182536]">7 Ta Mini-O'yin</h4>
+          <p class="text-xs text-[#7B8794]">Snake, 2048, Dino Runner, Car Racing, Word Puzzle, True/False orqali miyani charxlash.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Jonli Reyting va Leaderboard -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">7-Sahifa · Shon-Sharaf Zali</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Jonli Reyting va Shon-Sharaf Zali</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        <div class="bg-gradient-to-b from-amber-100/50 via-white to-amber-50/20 p-6 rounded-3xl border border-amber-200 text-center shadow-md space-y-2 sm:-translate-y-2">
+          <div class="text-3xl">👑</div>
+          <div class="text-xs font-black text-[#F5B83D] uppercase tracking-widest">1-O'rin (Chempion)</div>
+          <div class="font-extrabold text-base text-[#182536]">Oltin Kubok</div>
+          <p class="text-xs text-[#7B8794]">Oylik mavsum g'olibi maxsus "Clever Champion" maqomini qo'lga kiritadi.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 text-center shadow-xs space-y-2">
+          <div class="text-3xl">🥈</div>
+          <div class="text-xs font-black text-slate-400 uppercase tracking-widest">2-O'rin</div>
+          <div class="font-extrabold text-base text-[#182536]">Kumush Medali</div>
+          <p class="text-xs text-[#7B8794]">Yuqori XP va $RC tangalar sohibi bo'lgan bilimdonlar podiumi.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-[#FF9B45]/30 text-center shadow-xs space-y-2">
+          <div class="text-3xl">🥉</div>
+          <div class="text-xs font-black text-[#FF9B45] uppercase tracking-widest">3-O'rin</div>
+          <div class="font-extrabold text-base text-[#182536]">Bronza Medali</div>
+          <p class="text-xs text-[#7B8794]">Doimiy test yechib peshqadamlar safiga kirgan o'quvchilar shohsupasi.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Admin Panel va Xavfsizlik -->
+    <div class="slide w-full flex-col space-y-6 max-w-5xl mx-auto py-4">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#07858B] bg-teal-50 px-3 py-1 rounded-full border border-[#07858B]/20">8-Sahifa · Nazorat va Boshqaruv</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#182536] font-outfit">Administrator Paneli va Xavfsizlik</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+        <div class="glass p-6 rounded-3xl space-y-3 border border-[#E8EDF2]">
+          <h4 class="font-bold text-base text-[#182536] flex items-center gap-2">
+            <span>🛡️</span> To'liq Foydalanuvchilar Boshqaruvi
+          </h4>
+          <p class="text-xs text-[#7B8794] leading-relaxed">
+            Admin panel orqali saytdagi barcha ro'yxatdan o'tgan o'quvchilarni ko'rish, holatini faollashtirish/bloklash, rolini o'zgartirish va har bir ma'lumotni bitta tugma bilan nusxalash mumkin.
+          </p>
+        </div>
+
+        <div class="glass p-6 rounded-3xl space-y-3 border border-[#E8EDF2]">
+          <h4 class="font-bold text-base text-[#182536] flex items-center gap-2">
+            <span>🗑️</span> Mukammal Kaskadli O'chirish (Purge)
+          </h4>
+          <p class="text-xs text-[#7B8794] leading-relaxed">
+            Admin biror hisobni o'chirsa, u butun saytdan (reyting, do'stlar, natijalar, chatlar) bir zumda 100% yo'qoladi. Eski test/mock foydalanuvchilar ham tozalanib, faqat haqiqiy o'quvchilar ko'rinadi.
+          </p>
+        </div>
+      </div>
+
+      <div class="p-5 rounded-3xl bg-teal-50/70 border border-[#07858B]/20 text-center space-y-2">
+        <span class="text-xs font-bold text-[#07858B] uppercase tracking-wider">Xulosa</span>
+        <p class="text-xs sm:text-sm text-[#182536] font-medium max-w-2xl mx-auto">
+          <b>Quizora</b> — zamonaviy texnologiyalar, sun'iy intellekt va geymifikatsiyani o'zida birlashtirgan, o'quvchilarni bilimga chorlovchi nufuzli milliy ta'lim platformasidir!
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Navigation Footer Controls -->
+  <footer class="w-full max-w-6xl mx-auto px-6 pb-6 pt-2 flex items-center justify-between z-40">
+    <button id="prevBtn" onclick="changeSlide(-1)" class="px-5 py-2.5 rounded-2xl bg-white border border-[#E8EDF2] text-xs font-bold text-[#182536] hover:bg-slate-50 transition-all shadow-xs flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+      ← Oldingi
+    </button>
+
+    <!-- Slide Dots -->
+    <div class="flex items-center gap-2" id="dotsContainer"></div>
+
+    <button id="nextBtn" onclick="changeSlide(1)" class="px-6 py-2.5 rounded-2xl bg-[#07858B] hover:bg-[#066D73] text-white text-xs font-extrabold transition-all shadow-md shadow-[#07858B]/20 flex items-center gap-2">
+      Keyingi →
+    </button>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const dotsContainer = document.getElementById('dotsContainer');
+    const progressBar = document.getElementById('progressBar');
+    const currentSlideNum = document.getElementById('currentSlideNum');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Create dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-[#07858B] w-7' : 'bg-[#E8EDF2]'}`;
+      dot.onclick = () => goToSlide(i);
+      dotsContainer.appendChild(dot);
+    }
+
+    function updateView() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+
+      const dots = dotsContainer.children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i === currentSlide) {
+          dots[i].className = 'w-7 h-2.5 rounded-full bg-[#07858B] transition-all duration-300';
+        } else {
+          dots[i].className = 'w-2.5 h-2.5 rounded-full bg-[#E8EDF2] transition-all duration-300';
+        }
+      }
+
+      progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+      currentSlideNum.innerText = currentSlide + 1;
+
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.innerText = currentSlide === totalSlides - 1 ? 'Boshiga qaytish ↺' : 'Keyingi →';
+    }
+
+    function changeSlide(direction) {
+      currentSlide += direction;
+      if (currentSlide >= totalSlides) currentSlide = 0;
+      if (currentSlide < 0) currentSlide = 0;
+      updateView();
+    }
+
+    function goToSlide(idx) {
+      currentSlide = idx;
+      updateView();
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+      }
+    });
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    updateView();
+  </script>
+</body>
+</html>
