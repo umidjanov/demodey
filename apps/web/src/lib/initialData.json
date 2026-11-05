@@ -6,30 +6,14 @@
       "email": "admin@quizora.com",
       "username": "quizora_admin",
       "hashed_password": "$2b$12$R/HfRzpW.HqbdMOzWYbWOuxR96a/q9.GS1Wz1BfMycp2miZiVC4.C",
-      "first_name": "Alexander",
-      "last_name": "Vance",
+      "first_name": "Fayzulloh",
+      "last_name": "Umidjanov",
       "role": "admin",
       "is_active": true,
       "is_verified": true,
-      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=admin_vance",
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=admin_fayzulloh",
       "created_at": "2026-11-03T09:35:48.942576+00:00",
       "last_login_at": "2026-11-04T10:35:07.025954+00:00"
-    },
-    {
-      "email": "google_user_mock_goo@gmail.com",
-      "username": "googlelearner",
-      "hashed_password": "$2b$12$BSdrioujghlknevtXQF4YOWytJZyHZxb3GlHILWh2pwluTgIxEyeG",
-      "first_name": "Google",
-      "last_name": "Learner",
-      "role": "user",
-      "is_active": true,
-      "is_verified": true,
-      "google_id": "mock_google_token_signup",
-      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=googlelearner",
-      "created_at": "2026-11-04T14:36:10.127188+00:00",
-      "updated_at": "2026-11-04T14:36:10.127188+00:00",
-      "id": "6aeb42da5d229eee1c3889f4",
-      "_id": "6aeb42da5d229eee1c3889f4"
     }
   ],
   "categories": [
@@ -1363,31 +1347,6 @@
       "id": "6ae9aaf50a917ab362f438d2",
       "_id": "6ae9aaf50a917ab362f438d2",
       "last_active_date": "2026-11-04"
-    },
-    {
-      "user_id": "6aeb42da5d229eee1c3889f4",
-      "bio": "Joined QUIZORA through Google Identity.",
-      "level": 1,
-      "total_xp": 50,
-      "ranking_coins": 0,
-      "current_streak": 1,
-      "longest_streak": 1,
-      "last_active_date": "2026-11-04",
-      "completed_quizzes_count": 0,
-      "total_questions_answered": 0,
-      "total_correct_answers": 0,
-      "total_incorrect_answers": 0,
-      "average_score": 0.0,
-      "privacy_settings": {
-        "show_email": false,
-        "show_phone": false,
-        "show_activity": true,
-        "allow_invitations": true
-      },
-      "created_at": "2026-11-04T14:36:10.127188+00:00",
-      "updated_at": "2026-11-04T14:36:10.127188+00:00",
-      "id": "6aeb42da5d229eee1c3889f5",
-      "_id": "6aeb42da5d229eee1c3889f5"
     }
   ],
   "monthly_rewards": [],

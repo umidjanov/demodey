@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { useLanguage } from "@/src/context/LanguageContext";
 import { Sparkles, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { GoogleAuthModal } from "@/src/components/auth/GoogleAuthModal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,16 +33,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      await googleLogin("mock_google_token_login");
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Google authentication failed.");
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogleSuccess = async (data: { email: string; first_name: string; last_name: string }) => {
+    await googleLogin(data);
+    router.push("/dashboard");
   };
 
   const handleAdminLogin = async () => {
@@ -187,7 +182,7 @@ export default function LoginPage() {
           {/* Google Sign In */}
           <button
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={() => setShowGoogleModal(true)}
             disabled={loading}
             className="w-full bg-white hover:bg-[#F7F9FC] border border-[#E8EDF2] py-2.5 rounded-xl font-semibold text-xs text-[#182536] flex items-center justify-center gap-3 transition-colors shadow-xs"
           >
@@ -220,6 +215,12 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
+      <GoogleAuthModal
+        isOpen={showGoogleModal}
+        onClose={() => setShowGoogleModal(false)}
+        onSuccess={handleGoogleSuccess}
+      />
     </div>
   );
 }

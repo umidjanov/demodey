@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { useLanguage } from "@/src/context/LanguageContext";
 import { Sparkles, User, Mail, Lock, Phone, ArrowRight, AlertCircle } from "lucide-react";
+import { GoogleAuthModal } from "@/src/components/auth/GoogleAuthModal";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function RegisterPage() {
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +52,14 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleGoogleSignup = () => {
+    setShowGoogleModal(true);
+  };
+
+  const handleGoogleSuccess = async (data: { email: string; first_name: string; last_name: string }) => {
     setLoading(true);
     try {
-      await googleLogin("mock_google_token_signup");
+      await googleLogin(data);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Google registration failed.");
@@ -287,6 +293,12 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
+
+      <GoogleAuthModal
+        isOpen={showGoogleModal}
+        onClose={() => setShowGoogleModal(false)}
+        onSuccess={handleGoogleSuccess}
+      />
     </div>
   );
 }

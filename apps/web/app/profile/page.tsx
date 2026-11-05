@@ -20,11 +20,11 @@ import {
 } from "lucide-react";
 
 export default function ProfilePage() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, updateUserLocally } = useAuth();
   const { t, language } = useLanguage();
 
-  const [firstName, setFirstName] = useState(user?.first_name || "Azizbek");
-  const [lastName, setLastName] = useState(user?.last_name || "Rahimov");
+  const [firstName, setFirstName] = useState(user?.first_name || "");
+  const [lastName, setLastName] = useState(user?.last_name || "");
   const [bio, setBio] = useState(
     language === "uz"
       ? "Bilim olishga intiluvchi faol o'quvchi."
@@ -35,6 +35,14 @@ export default function ProfilePage() {
   const [selectedAvatar, setSelectedAvatar] = useState(
     user?.avatar_url || "https://api.dicebear.com/7.x/bottts/svg?seed=alex_learner"
   );
+
+  React.useEffect(() => {
+    if (user) {
+      if (user.first_name) setFirstName(user.first_name);
+      if (user.last_name) setLastName(user.last_name);
+      if (user.avatar_url) setSelectedAvatar(user.avatar_url);
+    }
+  }, [user]);
 
   const [privacy, setPrivacy] = useState({
     show_email: false,
@@ -54,6 +62,12 @@ export default function ProfilePage() {
     setSavedSuccess(false);
 
     try {
+      updateUserLocally({
+        first_name: firstName,
+        last_name: lastName,
+        avatar_url: selectedAvatar,
+      });
+
       await api.updateProfile({
         first_name: firstName,
         last_name: lastName,
@@ -66,6 +80,9 @@ export default function ProfilePage() {
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (e) {
       console.error(e);
+      // Still show success if local update was applied
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
     } finally {
       setSaving(false);
     }

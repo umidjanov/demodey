@@ -54,11 +54,12 @@ function getStore(): GlobalStore {
         id: "670e00000000000000000001",
         email: "admin@quizora.com",
         username: "quizora_admin",
-        first_name: "Alexander",
-        last_name: "Vance",
+        first_name: "Fayzulloh",
+        last_name: "Umidjanov",
         role: "admin",
         is_active: true,
         created_at: new Date().toISOString(),
+        avatar_url: "https://api.dicebear.com/7.x/bottts/svg?seed=admin_fayzulloh",
       });
       global.__QUIZORA_STORE__.profiles.push({
         id: "prof_admin",
@@ -222,18 +223,22 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const cleanEmail = (email || "").toLowerCase().trim();
 
       // Check admin
-      if (cleanEmail === "admin@quizora.com" && password === "Admin123!") {
-        const adminUser = store.users.find((u) => u.email === "admin@quizora.com") || {
-          id: "670e00000000000000000001",
-          email: "admin@quizora.com",
-          username: "quizora_admin",
-          first_name: "Alexander",
-          last_name: "Vance",
-          role: "admin",
-          is_active: true,
-          created_at: new Date().toISOString(),
-          avatar_url: "https://api.dicebear.com/7.x/bottts/svg?seed=admin_vance",
-        };
+      if (cleanEmail === "admin@quizora.com" && (password === "Admin123!" || password === "AdminPassword123!")) {
+        let adminUser = store.users.find((u) => u.email === "admin@quizora.com");
+        if (!adminUser) {
+          adminUser = {
+            id: "670e00000000000000000001",
+            email: "admin@quizora.com",
+            username: "quizora_admin",
+            first_name: "Fayzulloh",
+            last_name: "Umidjanov",
+            role: "admin",
+            is_active: true,
+            created_at: new Date().toISOString(),
+            avatar_url: "https://api.dicebear.com/7.x/bottts/svg?seed=admin_fayzulloh",
+          };
+          store.users.unshift(adminUser);
+        }
         const access_token = createToken(adminUser);
         return NextResponse.json(
           {
@@ -268,21 +273,45 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
     if (pathname === "auth/google" && method === "POST") {
       const body = await req.json().catch(() => ({}));
-      const email = body.email || "google_user@quizora.app";
-      let user = store.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+      let email = body.email;
+      let firstName = body.first_name;
+      let lastName = body.last_name;
+      let avatarUrl = body.avatar_url;
+
+      // If a real Google JWT credential was provided, decode payload
+      if (body.credential && typeof body.credential === "string" && body.credential.includes(".")) {
+        try {
+          const parts = body.credential.split(".");
+          if (parts.length >= 2) {
+            const decoded = JSON.parse(Buffer.from(parts[1], "base64url").toString());
+            if (decoded.email) email = decoded.email;
+            if (decoded.given_name) firstName = decoded.given_name;
+            if (decoded.family_name) lastName = decoded.family_name;
+            if (decoded.name && !firstName) firstName = decoded.name;
+            if (decoded.picture) avatarUrl = decoded.picture;
+          }
+        } catch (e) {
+          console.warn("Failed to decode Google token:", e);
+        }
+      }
+
+      const cleanEmail = (email || "user_" + Math.random().toString(36).substring(2, 7) + "@gmail.com").toLowerCase().trim();
+      let user = store.users.find((u) => u.email.toLowerCase() === cleanEmail);
       if (!user) {
         const userId = "u_g_" + Math.random().toString(36).substring(2, 9);
-        const username = "google_" + Math.random().toString(36).substring(2, 7);
+        const usernameBase = cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "");
+        const username = usernameBase || ("user_" + Math.random().toString(36).substring(2, 7));
+
         user = {
           id: userId,
-          email,
+          email: cleanEmail,
           username,
-          first_name: body.first_name || "Google",
-          last_name: body.last_name || "Learner",
+          first_name: firstName || "Google Foydalanuvchi",
+          last_name: lastName || "",
           role: "user",
           is_active: true,
           created_at: new Date().toISOString(),
-          avatar_url: body.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+          avatar_url: avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
         };
         store.users.unshift(user);
         store.profiles.unshift({
@@ -297,6 +326,10 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
           completed_quizzes_count: 0,
           average_score: 0.0,
         });
+      } else {
+        if (firstName) user.first_name = firstName;
+        if (lastName) user.last_name = lastName;
+        if (avatarUrl) user.avatar_url = avatarUrl;
       }
       const access_token = createToken(user);
       return NextResponse.json(
@@ -347,6 +380,8 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       if (method === "PUT") {
         const body = await req.json();
         Object.assign(currentUser, body);
+        const p = store.profiles.find((x) => x.user_id === currentUser.id);
+        if (p && body.bio) p.bio = body.bio;
         return NextResponse.json({ ...currentUser }, { headers: corsHeaders() });
       }
     }
@@ -712,7 +747,9 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
     }
 
     if (pathname === "admin/purge-fake-users" && method === "POST") {
-      return NextResponse.json({ message: "Soxta userlar butunlay tozalandi." }, { headers: corsHeaders() });
+      store.users = store.users.filter((u) => u.role === "admin");
+      store.profiles = store.profiles.filter((p) => p.user_id === "670e00000000000000000001");
+      return NextResponse.json({ message: "Barcha sinov foydalanuvchilari butunlay tozalandi." }, { headers: corsHeaders() });
     }
 
     // --- LEADERBOARD & GAMIFICATION ---

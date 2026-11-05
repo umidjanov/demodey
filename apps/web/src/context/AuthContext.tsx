@@ -33,9 +33,10 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
-  googleLogin: (credential: string) => Promise<void>;
+  googleLogin: (data: string | { email?: string; first_name?: string; last_name?: string; avatar_url?: string; credential?: string }) => Promise<void>;
   logout: () => void;
   refreshProfile: () => Promise<void>;
+  updateUserLocally: (updated: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,16 +50,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchProfile = async () => {
     try {
       const p = await api.getProfile();
-      setProfile(p);
       if (p) {
+        // Read local overrides if the user edited their profile
+        let localOverrides: any = null;
+        if (typeof window !== "undefined") {
+          try {
+            const raw = localStorage.getItem(`quizora_profile_${p.user_id}`);
+            if (raw) localOverrides = JSON.parse(raw);
+          } catch {}
+        }
+
+        const firstName = localOverrides?.first_name || p.first_name || "";
+        const lastName = localOverrides?.last_name || p.last_name || "";
+        const avatarUrl = localOverrides?.avatar_url || p.avatar_url;
+
+        p.first_name = firstName;
+        p.last_name = lastName;
+        if (avatarUrl) p.avatar_url = avatarUrl;
+        setProfile(p);
+
         setUser((prev) => ({
           id: p.user_id,
           email: p.email || prev?.email || "",
           username: p.username || prev?.username || "learner",
-          first_name: p.first_name || prev?.first_name || "",
-          last_name: p.last_name || prev?.last_name || "",
+          first_name: firstName || prev?.first_name || "",
+          last_name: lastName || prev?.last_name || "",
           role: p.role || prev?.role || "user",
-          avatar_url: p.avatar_url || prev?.avatar_url,
+          avatar_url: avatarUrl || prev?.avatar_url,
         }));
       }
     } catch {
@@ -108,10 +126,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const googleLogin = async (credential: string) => {
+  const googleLogin = async (param: string | { email?: string; first_name?: string; last_name?: string; avatar_url?: string; credential?: string }) => {
     setIsLoading(true);
     try {
-      const res = await api.googleAuth({ credential });
+      const payload = typeof param === "string" ? { credential: param } : param;
+      const res = await api.googleAuth(payload);
       setStoredToken(res.access_token);
       setToken(res.access_token);
       setUser(res.user);
@@ -119,6 +138,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const updateUserLocally = (updated: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const merged = { ...prev, ...updated };
+      if (typeof window !== "undefined") {
+        try {
+          const key = `quizora_profile_${prev.id}`;
+          const raw = localStorage.getItem(key);
+          const existing = raw ? JSON.parse(raw) : {};
+          localStorage.setItem(key, JSON.stringify({ ...existing, ...updated }));
+        } catch {}
+      }
+      return merged;
+    });
   };
 
   const logout = () => {
@@ -140,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         googleLogin,
         logout,
         refreshProfile: fetchProfile,
+        updateUserLocally,
       }}
     >
       {children}

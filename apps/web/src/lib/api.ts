@@ -30,6 +30,78 @@ export function setStoredToken(token: string | null) {
   }
 }
 
+// Local User & Profile Persistence
+export function getLocalRegisteredUsers(): any[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("quizora_registered_users");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveLocalUser(user: any) {
+  if (typeof window === "undefined" || !user) return;
+  try {
+    const users = getLocalRegisteredUsers();
+    const existingIndex = users.findIndex((u) => u.id === user.id || u.email === user.email);
+    if (existingIndex >= 0) {
+      users[existingIndex] = { ...users[existingIndex], ...user };
+    } else {
+      users.unshift(user);
+    }
+    localStorage.setItem("quizora_registered_users", JSON.stringify(users));
+
+    // Remove from deleted list if it was deleted previously
+    const deleted = getDeletedUserIds().filter((id) => id !== user.id);
+    localStorage.setItem("quizora_deleted_user_ids", JSON.stringify(deleted));
+  } catch {}
+}
+
+export function getDeletedUserIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("quizora_deleted_user_ids");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function recordDeletedUserId(userId: string) {
+  if (typeof window === "undefined" || !userId) return;
+  try {
+    const deleted = getDeletedUserIds();
+    if (!deleted.includes(userId)) {
+      deleted.push(userId);
+      localStorage.setItem("quizora_deleted_user_ids", JSON.stringify(deleted));
+    }
+    const users = getLocalRegisteredUsers().filter((u) => u.id !== userId);
+    localStorage.setItem("quizora_registered_users", JSON.stringify(users));
+  } catch {}
+}
+
+export function saveUserProfileOverride(userId: string, data: any) {
+  if (typeof window === "undefined" || !userId) return;
+  try {
+    const key = `quizora_profile_${userId}`;
+    const existingRaw = localStorage.getItem(key);
+    const existing = existingRaw ? JSON.parse(existingRaw) : {};
+    localStorage.setItem(key, JSON.stringify({ ...existing, ...data }));
+  } catch {}
+}
+
+export function getUserProfileOverride(userId: string): any {
+  if (typeof window === "undefined" || !userId) return null;
+  try {
+    const raw = localStorage.getItem(`quizora_profile_${userId}`);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getStoredToken();
   const headers: HeadersInit = {
@@ -57,13 +129,28 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 export const api = {
   // Auth
-  register: (data: any) => request<any>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
+  register: async (data: any) => {
+    const res = await request<any>("/auth/register", { method: "POST", body: JSON.stringify(data) });
+    if (res?.user) {
+      saveLocalUser(res.user);
+    }
+    return res;
+  },
   login: (data: any) => request<any>("/auth/login", { method: "POST", body: JSON.stringify(data) }),
-  googleAuth: (data: any) => request<any>("/auth/google", { method: "POST", body: JSON.stringify(data) }),
+  googleAuth: async (data: any) => {
+    const res = await request<any>("/auth/google", { method: "POST", body: JSON.stringify(data) });
+    if (res?.user) {
+      saveLocalUser(res.user);
+    }
+    return res;
+  },
 
   // Profiles
   getProfile: () => request<any>("/profiles/me"),
-  updateProfile: (data: any) => request<any>("/profiles/me", { method: "PUT", body: JSON.stringify(data) }),
+  updateProfile: async (data: any) => {
+    const res = await request<any>("/profiles/me", { method: "PUT", body: JSON.stringify(data) });
+    return res;
+  },
   getLifetimeProgress: () => request<any>("/profiles/me/lifetime-progress"),
 
   // Quiz Engine
@@ -131,7 +218,10 @@ export const api = {
     request<any>(`/admin/users/${userId}/status`, { method: "PUT", body: JSON.stringify({ is_active: isActive }) }),
   updateUserRole: (userId: string, role: string) =>
     request<any>(`/admin/users/${userId}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
-  deleteUser: (userId: string) => request<any>(`/admin/users/${userId}`, { method: "DELETE" }),
+  deleteUser: async (userId: string) => {
+    recordDeletedUserId(userId);
+    return await request<any>(`/admin/users/${userId}`, { method: "DELETE" });
+  },
   purgeFakeUsers: () => request<any>("/admin/purge-fake-users", { method: "POST" }),
   bulkImportQuestions: (questions: any[]) =>
     request<any>("/admin/questions/bulk-import", { method: "POST", body: JSON.stringify(questions) }),
