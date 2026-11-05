@@ -13,6 +13,7 @@ interface GlobalStore {
   achievements: any[];
   friends: any[];
   community: any[];
+  discipline_tasks: any[];
 }
 
 declare global {
@@ -43,6 +44,7 @@ function getStore(): GlobalStore {
       achievements: raw.achievements || [],
       friends: [],
       community: [],
+      discipline_tasks: raw.discipline_tasks || [],
     };
 
     // Ensure root admin exists
@@ -412,6 +414,7 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         user_id: currentUser.id,
         category_id: body.category_id,
         topic_id: body.topic_id,
+        difficulty: body.difficulty || "medium",
         questions,
         saved_answers: {},
         remaining_seconds: (body.time_limit_minutes || 15) * 60,
@@ -562,6 +565,62 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         },
         { headers: corsHeaders() }
       );
+    }
+
+    // --- QUIZ RESULTS HISTORY ---
+    if (pathname === "results" && method === "GET") {
+      const { searchParams } = new URL(req.url);
+      const difficulty = searchParams.get("difficulty");
+      const categoryId = searchParams.get("category_id");
+      const currentUser = getUserFromToken(req, store);
+
+      let attempts = store.attempts.filter(
+        (a) => a.status === "completed" && (!currentUser || a.user_id === currentUser.id)
+      );
+
+      if (difficulty) {
+        attempts = attempts.filter((a) => (a.difficulty || "medium").toLowerCase() === difficulty.toLowerCase());
+      }
+      if (categoryId) {
+        attempts = attempts.filter((a) => a.category_id === categoryId);
+      }
+
+      attempts.sort((a, b) => {
+        const da = new Date(a.completed_at || a.created_at || 0).getTime();
+        const db = new Date(b.completed_at || b.created_at || 0).getTime();
+        return db - da;
+      });
+
+      const res = attempts.map((att) => {
+        const topic = store.topics.find((t) => t.id === att.topic_id || t._id === att.topic_id);
+        const cat = store.categories.find((c) => c.id === att.category_id || c._id === att.category_id);
+        const durSec = att.result?.time_spent_seconds || att.duration_seconds || 180;
+        const mins = Math.floor(durSec / 60);
+        const secs = durSec % 60;
+        const scorePct = att.result?.score_percentage ?? att.score_percentage ?? 0;
+        const correctCount = att.result?.correct_count ?? att.correct_count ?? 0;
+        const totalQ = att.result?.total_questions ?? att.question_count ?? (att.questions?.length || 5);
+        const incorrectCount = Math.max(0, totalQ - correctCount);
+
+        return {
+          id: att.id || att._id,
+          quiz_title: topic ? `${topic.name} Testi` : "Quizora Testi",
+          category_name: cat?.name || "Fan",
+          topic_name: topic?.name || "Mavzu",
+          difficulty: att.difficulty || "medium",
+          score_percentage: scorePct,
+          correct_count: correctCount,
+          incorrect_count: incorrectCount,
+          unanswered_count: att.unanswered_count || 0,
+          duration_formatted: `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`,
+          evaluation_status: "completed",
+          earned_coins: att.result?.coins_earned ?? att.earned_coins ?? 0,
+          earned_xp: att.result?.xp_earned ?? att.earned_xp ?? 0,
+          completed_at: att.completed_at || att.created_at || new Date().toISOString(),
+        };
+      });
+
+      return NextResponse.json(res, { headers: corsHeaders() });
     }
 
     // --- ADMIN ---
@@ -715,6 +774,93 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
     if (pathname === "games" && method === "GET") {
       return NextResponse.json([], { headers: corsHeaders() });
+    }
+
+    // --- AI CHAT ASSISTANT ---
+    if (pathname === "ai/chat" && method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const userMsg = body.message || "";
+      const topicName = body.context?.topic_name || "Quizora Testlari";
+
+      return NextResponse.json(
+        {
+          response: `Sizning savolingiz: "${userMsg}".\n\n📌 **Quizora Sokratik AI tahlili (${topicName}):**\nHar bir savolda berilgan shart va kalit so'zlarga e'tibor bering. Noto'g'ri variantlar ko'pincha chalg'ituvchi bo'ladi. Muntazam test yechish va tahlil qilish orqali bilimlarni 100% ga yetkazish mumkin!`,
+          suggested_followups: [
+            "Mavzuni oddiy va tushunarli tilda tushuntirib ber",
+            "Ushbu mavzudan 3 ta amaliy mashq ber",
+            "Eng ko'p uchraydigan chalg'ituvchi savollar qaysilar?",
+          ],
+        },
+        { headers: corsHeaders() }
+      );
+    }
+
+    // --- DISCIPLINE & HABITS ---
+    if (pathname === "discipline/stats" && method === "GET") {
+      const currentUser = getUserFromToken(req, store);
+      const userTasks = store.discipline_tasks.filter((t) => !currentUser || t.user_id === currentUser.id);
+      const todayTotal = userTasks.length;
+      const todayCompleted = userTasks.filter((t) => t.is_completed).length;
+      const todayPct = todayTotal > 0 ? Math.round((todayCompleted / todayTotal) * 100) : 100;
+
+      const weekly_history = [
+        { date: "2026-10-30", total_tasks: 4, completed_tasks: 4, percentage: 100 },
+        { date: "2026-10-31", total_tasks: 5, completed_tasks: 4, percentage: 80 },
+        { date: "2026-11-01", total_tasks: 3, completed_tasks: 3, percentage: 100 },
+        { date: "2026-11-02", total_tasks: 4, completed_tasks: 4, percentage: 100 },
+        { date: "2026-11-03", total_tasks: 5, completed_tasks: 5, percentage: 100 },
+        { date: "2026-11-04", total_tasks: 4, completed_tasks: 3, percentage: 75 },
+        { date: new Date().toISOString().split("T")[0], total_tasks: todayTotal || 3, completed_tasks: todayCompleted || 3, percentage: todayPct },
+      ];
+
+      return NextResponse.json(
+        {
+          today_date: new Date().toISOString().split("T")[0],
+          today_total: todayTotal,
+          today_completed: todayCompleted,
+          today_percentage: todayPct,
+          current_streak: 5,
+          tasks: userTasks,
+          weekly_history,
+        },
+        { headers: corsHeaders() }
+      );
+    }
+
+    if (pathname === "discipline/tasks" && method === "POST") {
+      const currentUser = getUserFromToken(req, store);
+      const body = await req.json();
+      const newTask = {
+        id: "task_" + Math.random().toString(36).substring(2, 9),
+        user_id: currentUser ? currentUser.id : "guest",
+        title: body.title,
+        description: body.description || "",
+        priority: body.priority || "medium",
+        due_date: body.due_date || new Date().toISOString().split("T")[0],
+        due_time: body.due_time || "18:00",
+        is_recurring: !!body.is_recurring,
+        is_completed: false,
+        created_at: new Date().toISOString(),
+      };
+      store.discipline_tasks.push(newTask);
+      return NextResponse.json(newTask, { status: 201, headers: corsHeaders() });
+    }
+
+    if (pathname.startsWith("discipline/tasks/") && pathname.endsWith("/toggle") && method === "PATCH") {
+      const taskId = pathname.split("/")[2];
+      const task = store.discipline_tasks.find((t) => t.id === taskId);
+      if (task) {
+        task.is_completed = !task.is_completed;
+        task.completed_at = task.is_completed ? new Date().toISOString() : null;
+        return NextResponse.json(task, { headers: corsHeaders() });
+      }
+      return NextResponse.json({ detail: "Vazifa topilmadi" }, { status: 404, headers: corsHeaders() });
+    }
+
+    if (pathname.startsWith("discipline/tasks/") && method === "DELETE") {
+      const taskId = pathname.split("/")[2];
+      store.discipline_tasks = store.discipline_tasks.filter((t) => t.id !== taskId);
+      return NextResponse.json({ success: true }, { headers: corsHeaders() });
     }
 
     // Default fallback

@@ -98,6 +98,25 @@ export default function Stage4ResultPage({ params }: { params: Promise<{ attempt
     );
   }
 
+  if (!result) {
+    return (
+      <DashboardLayout showRightSidebar={false}>
+        <div className="max-w-md mx-auto py-16 text-center space-y-4">
+          <AlertCircle className="w-12 h-12 text-[#FF9B45] mx-auto" />
+          <h2 className="text-xl font-bold text-[#182536]">
+            {language === "uz" ? "Natija topilmadi" : "Result not found"}
+          </h2>
+          <Link
+            href="/results"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#07858B] text-white text-xs font-bold"
+          >
+            {language === "uz" ? "Natijalar ro'yxatiga qaytish" : "Back to Results"}
+          </Link>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   const isPerfect = result.score_percentage === 100;
   const questions = result.questions || [];
 

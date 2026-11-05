@@ -24,8 +24,8 @@ export default function AchievementsPage() {
   useEffect(() => {
     api
       .getAchievements()
-      .then((data) => setAchievements(data))
-      .catch(() => {})
+      .then((data) => setAchievements(Array.isArray(data) ? data : []))
+      .catch(() => setAchievements([]))
       .finally(() => setLoading(false));
   }, []);
 

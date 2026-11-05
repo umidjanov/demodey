@@ -22,38 +22,15 @@ export default function MyResultsPage() {
     try {
       const query = difficultyFilter ? `difficulty=${difficultyFilter}` : "";
       const data = await api.getResults(query);
-      setResults(data);
+      if (Array.isArray(data)) {
+        setResults(data);
+      } else if (data && Array.isArray((data as any).results)) {
+        setResults((data as any).results);
+      } else {
+        setResults([]);
+      }
     } catch {
-      setResults([
-        {
-          id: "demo_res_1",
-          quiz_title: language === "uz" ? "Ona tili va Adabiyot Testi" : "Python & Backend Mastery Quiz",
-          category_name: language === "uz" ? "Ona tili" : "IT & Programming",
-          topic_name: language === "uz" ? "Grammatika qoidalari" : "Python AsyncIO",
-          difficulty: "medium",
-          score_percentage: 100,
-          correct_count: 10,
-          incorrect_count: 0,
-          duration_formatted: "06:45",
-          earned_coins: 10,
-          earned_xp: 200,
-          completed_at: "2026-11-02T14:30:00Z",
-        },
-        {
-          id: "demo_res_2",
-          quiz_title: language === "uz" ? "O'zbekiston tarixi: Amir Temur davri" : "English & IELTS Grammar Inversion",
-          category_name: language === "uz" ? "Tarix" : "Languages",
-          topic_name: language === "uz" ? "Amir Temur saltanati" : "Inversion",
-          difficulty: "hard",
-          score_percentage: 90,
-          correct_count: 9,
-          incorrect_count: 1,
-          duration_formatted: "08:12",
-          earned_coins: 0,
-          earned_xp: 150,
-          completed_at: "2026-11-01T10:15:00Z",
-        },
-      ]);
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -98,7 +75,14 @@ export default function MyResultsPage() {
 
         {/* Results List */}
         <div className="space-y-4">
-          {results.length === 0 ? (
+          {loading ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E8EDF2] flex flex-col justify-center items-center gap-3">
+              <div className="w-8 h-8 border-3 border-[#07858B] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs font-semibold text-[#7B8794]">
+                {language === "uz" ? "Natijalar yuklanmoqda..." : language === "ru" ? "Загрузка результатов..." : "Loading results..."}
+              </span>
+            </div>
+          ) : !Array.isArray(results) || results.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center border border-[#E8EDF2] space-y-3">
               <CheckSquare className="w-12 h-12 text-[#7B8794]/40 mx-auto" />
               <h3 className="font-bold text-base text-[#182536]">
@@ -109,7 +93,7 @@ export default function MyResultsPage() {
               </p>
               <Link
                 href="/quizzes"
-                className="inline-flex items-center gap-2 bg-[#07858B] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-xs"
+                className="inline-flex items-center gap-2 bg-[#07858B] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-xs hover:bg-[#066D73] transition-colors"
               >
                 {t.dashboard.solveQuizBtn}
               </Link>
