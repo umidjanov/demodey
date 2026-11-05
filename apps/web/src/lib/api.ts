@@ -102,6 +102,64 @@ export function getUserProfileOverride(userId: string): any {
   }
 }
 
+export async function getAllPlatformLearners(): Promise<any[]> {
+  try {
+    const comm = await api.getCommunityUsers().catch(() => []);
+    const localUsers = getLocalRegisteredUsers();
+    const deletedIds = getDeletedUserIds();
+
+    const map = new Map<string, any>();
+
+    (Array.isArray(comm) ? comm : []).forEach((u: any) => {
+      if (u?.id && !deletedIds.includes(u.id)) {
+        map.set(u.id, u);
+      }
+    });
+
+    localUsers.forEach((u: any) => {
+      if (u?.id && !deletedIds.includes(u.id)) {
+        const existing = map.get(u.id) || {};
+        map.set(u.id, {
+          id: u.id,
+          username: u.username || u.email?.split("@")[0] || "learner",
+          first_name: u.first_name || existing.first_name || "",
+          last_name: u.last_name || existing.last_name || "",
+          avatar_url: u.avatar_url || existing.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.username || u.id}`,
+          level: u.level || existing.level || 1,
+          level_title: u.level_title || existing.level_title || "Bilimdon",
+          total_xp: u.total_xp ?? existing.total_xp ?? 150,
+          ranking_coins: u.ranking_coins ?? u.coins ?? existing.ranking_coins ?? 50,
+          coins: u.coins ?? existing.coins ?? 50,
+          current_streak: u.current_streak ?? existing.current_streak ?? 1,
+          completed_quizzes_count: u.completed_quizzes_count ?? existing.completed_quizzes_count ?? 2,
+          total_questions_answered: u.total_questions_answered ?? existing.total_questions_answered ?? 10,
+          total_correct_answers: u.total_correct_answers ?? existing.total_correct_answers ?? 8,
+          total_incorrect_answers: u.total_incorrect_answers ?? existing.total_incorrect_answers ?? 2,
+          accuracy_percentage: u.average_score ?? u.accuracy_percentage ?? existing.accuracy_percentage ?? 80,
+          average_score: u.average_score ?? existing.average_score ?? 80,
+          bio: u.bio || existing.bio || "Quizora ta'lim platformasi o'quvchisi",
+          is_online: true,
+          created_at: u.created_at || existing.created_at || new Date().toISOString(),
+          role: u.role || existing.role || "user",
+          phone_number: u.phone_number || existing.phone_number || "",
+          email: u.email || existing.email || "",
+        });
+      }
+    });
+
+    const list = Array.from(map.values());
+    list.sort((a, b) => (b.total_xp || 0) - (a.total_xp || 0));
+
+    return list.map((user, idx) => ({
+      ...user,
+      rank: idx + 1,
+    }));
+  } catch (err) {
+    console.error("Error in getAllPlatformLearners:", err);
+    return [];
+  }
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getStoredToken();
   const headers: HeadersInit = {

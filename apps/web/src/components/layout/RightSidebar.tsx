@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/src/context/LanguageContext";
 import { useAuth } from "@/src/context/AuthContext";
-import { api } from "@/src/lib/api";
-import { Users, Check, X, Swords, ArrowRight, UserPlus, Flame, Sparkles } from "lucide-react";
+import { api, getAllPlatformLearners } from "@/src/lib/api";
+import { UserProfileModal } from "@/src/components/profile/UserProfileModal";
+import { Users, Check, X, Swords, ArrowRight, UserPlus, Flame, Sparkles, Trophy, Eye } from "lucide-react";
 
 interface UserItem {
   id: string;
@@ -15,6 +16,7 @@ interface UserItem {
   level: number;
   isOnline: boolean;
   activity?: string;
+  rawUser?: any;
 }
 
 export function RightSidebar() {
@@ -24,6 +26,7 @@ export function RightSidebar() {
   const [communityUsers, setCommunityUsers] = useState<UserItem[]>([]);
   const [invitations, setInvitations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
 
   useEffect(() => {
     loadSidebarData();
@@ -38,33 +41,40 @@ export function RightSidebar() {
     }
 
     try {
-      const friendsRes = await api.getFriends().catch(() => null);
-      if (friendsRes && Array.isArray(friendsRes.friends)) {
+      const [friendsRes, learners] = await Promise.all([
+        api.getFriends().catch(() => null),
+        getAllPlatformLearners().catch(() => []),
+      ]);
+
+      if (friendsRes && Array.isArray(friendsRes.friends) && friendsRes.friends.length > 0) {
         setFriends(
           friendsRes.friends.map((f: any) => ({
-            id: f.user_id,
+            id: f.user_id || f.id,
             name: `${f.first_name || ""} ${f.last_name || ""}`.trim() || f.username,
             username: f.username,
             avatar: f.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${f.username}`,
             level: f.level || 1,
             isOnline: f.is_online ?? true,
-            activity: f.current_activity || `${t.dashboard.level} ${f.level || 1}`,
+            activity: f.current_activity || `Lvl ${f.level || 1} · ${f.total_xp || 0} XP`,
+            rawUser: f,
           }))
         );
       }
 
-      const communityRes = await api.getCommunityUsers().catch(() => []);
-      if (Array.isArray(communityRes)) {
+      if (Array.isArray(learners) && learners.length > 0) {
         setCommunityUsers(
-          communityRes.map((u: any) => ({
-            id: u.id,
-            name: `${u.first_name || ""} ${u.last_name || ""}`.trim() || u.username,
-            username: u.username,
-            avatar: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.username}`,
-            level: u.level || 1,
-            isOnline: u.is_online ?? true,
-            activity: u.activity || `${t.dashboard.level} ${u.level || 1}`,
-          }))
+          learners
+            .filter((u: any) => u.id !== user.id)
+            .map((u: any) => ({
+              id: u.id,
+              name: `${u.first_name || ""} ${u.last_name || ""}`.trim() || u.username,
+              username: u.username,
+              avatar: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.username}`,
+              level: u.level || 1,
+              isOnline: u.is_online ?? true,
+              activity: `#${u.rank || 1} · Lvl ${u.level || 1} (${u.total_xp || 0} XP)`,
+              rawUser: u,
+            }))
         );
       }
     } catch {
@@ -78,7 +88,7 @@ export function RightSidebar() {
     setInvitations((prev) => prev.filter((i) => i.id !== invId));
   };
 
-  const displayUsers = friends.length > 0 ? friends : communityUsers;
+  const displayUsers = communityUsers.length > 0 ? communityUsers : friends;
 
   return (
     <aside className="w-80 bg-white border-l border-[#E8EDF2] flex flex-col h-screen sticky top-0 overflow-y-auto p-5 space-y-6 hidden xl:flex select-none z-10">
@@ -177,10 +187,10 @@ export function RightSidebar() {
         ) : (
           <div className="space-y-2">
             {displayUsers.slice(0, 6).map((item) => (
-              <Link
+              <button
                 key={item.id}
-                href="/messages"
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F7F9FC] transition-colors group"
+                onClick={() => setSelectedUser(item.rawUser || item)}
+                className="w-full text-left flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F7F9FC] transition-colors group cursor-pointer border border-transparent hover:border-[#E8EDF2]"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative shrink-0">
@@ -203,10 +213,12 @@ export function RightSidebar() {
                   </div>
                 </div>
 
-                <span className="text-[10px] font-bold text-[#07858B] bg-[#E7F5F5] px-2 py-0.5 rounded-full shrink-0">
-                  Lvl {item.level}
-                </span>
-              </Link>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-[10px] font-bold text-[#07858B] bg-[#E7F5F5] px-2 py-0.5 rounded-full">
+                    Lvl {item.level}
+                  </span>
+                </div>
+              </button>
             ))}
           </div>
         )}
@@ -233,6 +245,12 @@ export function RightSidebar() {
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
+
+      <UserProfileModal
+        user={selectedUser}
+        isOpen={Boolean(selectedUser)}
+        onClose={() => setSelectedUser(null)}
+      />
     </aside>
   );
 }

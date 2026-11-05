@@ -792,20 +792,66 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
     }
 
     if (pathname === "friends" && method === "GET") {
-      return NextResponse.json({ friends: [] }, { headers: corsHeaders() });
+      const currentUser = getUserFromToken(req, store);
+      const friends = store.users
+        .filter((u) => !currentUser || u.id !== currentUser.id)
+        .map((u) => {
+          const p = store.profiles.find((x) => x.user_id === u.id) || {};
+          return {
+            user_id: u.id,
+            id: u.id,
+            username: u.username,
+            first_name: u.first_name,
+            last_name: u.last_name,
+            avatar_url: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.username}`,
+            level: p.level || 1,
+            level_title: p.level_title || "Bilimdon",
+            total_xp: p.total_xp || 150,
+            ranking_coins: p.ranking_coins || p.coins || 50,
+            coins: p.coins || 50,
+            current_streak: p.current_streak || 1,
+            completed_quizzes_count: p.completed_quizzes_count || 1,
+            total_questions_answered: p.total_questions_answered || 10,
+            total_correct_answers: p.total_correct_answers || 8,
+            total_incorrect_answers: p.total_incorrect_answers || 2,
+            accuracy_percentage: p.average_score || 85,
+            average_score: p.average_score || 85,
+            bio: p.bio || "Quizora platformasida bilim oluvchi",
+            is_online: true,
+            created_at: u.created_at,
+            role: u.role || "user",
+          };
+        });
+      return NextResponse.json({ friends, incoming_requests: [] }, { headers: corsHeaders() });
     }
 
     if (pathname === "community" && method === "GET") {
-      const list = store.users.slice(0, 10).map((u) => ({
-        id: u.id,
-        username: u.username,
-        first_name: u.first_name,
-        last_name: u.last_name,
-        level: 1,
-        is_online: true,
-        activity: "Test yechmoqda",
-        accuracy_percentage: 85,
-      }));
+      const list = store.users.map((u) => {
+        const p = store.profiles.find((x) => x.user_id === u.id) || {};
+        return {
+          id: u.id,
+          username: u.username,
+          first_name: u.first_name,
+          last_name: u.last_name,
+          avatar_url: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.username}`,
+          level: p.level || 1,
+          level_title: p.level_title || "Bilimdon",
+          total_xp: p.total_xp || 150,
+          ranking_coins: p.ranking_coins || p.coins || 50,
+          coins: p.coins || 50,
+          current_streak: p.current_streak || 1,
+          completed_quizzes_count: p.completed_quizzes_count || 1,
+          total_questions_answered: p.total_questions_answered || 10,
+          total_correct_answers: p.total_correct_answers || 8,
+          total_incorrect_answers: p.total_incorrect_answers || 2,
+          accuracy_percentage: p.average_score || 85,
+          average_score: p.average_score || 85,
+          bio: p.bio || "Quizora platformasida bilim oluvchi",
+          is_online: true,
+          created_at: u.created_at,
+          role: u.role || "user",
+        };
+      });
       return NextResponse.json(list, { headers: corsHeaders() });
     }
 
