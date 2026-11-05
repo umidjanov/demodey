@@ -14,6 +14,7 @@ interface GlobalStore {
   friends: any[];
   community: any[];
   discipline_tasks: any[];
+  messages: any[];
 }
 
 declare global {
@@ -45,6 +46,7 @@ function getStore(): GlobalStore {
       friends: [],
       community: [],
       discipline_tasks: raw.discipline_tasks || [],
+      messages: [],
     };
 
     // Ensure root admin exists
@@ -857,6 +859,115 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
     if (pathname === "games" && method === "GET") {
       return NextResponse.json([], { headers: corsHeaders() });
+    }
+
+    // --- DIRECT 1-TO-1 PRIVATE MESSAGES ---
+    if (pathname === "messages/conversations/recent" && method === "GET") {
+      const currentUser = getUserFromToken(req, store);
+      if (!currentUser) {
+        return NextResponse.json({ detail: "Avtorizatsiya talab qilinadi." }, { status: 401, headers: corsHeaders() });
+      }
+
+      const allMsgs = store.messages || [];
+      const userMsgs = allMsgs.filter(
+        (m: any) => m.sender_id === currentUser.id || m.recipient_id === currentUser.id
+      );
+
+      const convMap: { [partnerId: string]: any } = {};
+      userMsgs.forEach((m: any) => {
+        const partnerId = m.sender_id === currentUser.id ? m.recipient_id : m.sender_id;
+        const partnerUser = store.users.find((u) => u.id === partnerId || u.username === partnerId);
+        const partnerProfile = store.profiles.find((p) => p.user_id === partnerId) || {};
+
+        if (!convMap[partnerId]) {
+          convMap[partnerId] = {
+            partner_id: partnerId,
+            partner_username: partnerUser?.username || partnerId,
+            partner_name: partnerUser ? `${partnerUser.first_name || ""} ${partnerUser.last_name || ""}`.trim() || partnerUser.username : partnerId,
+            partner_avatar: partnerUser?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${partnerId}`,
+            partner_level: partnerProfile.level || 1,
+            partner_xp: partnerProfile.total_xp || 0,
+            last_message: m.content,
+            last_message_at: m.created_at,
+            unread_count: 0,
+          };
+        }
+
+        if (new Date(m.created_at).getTime() >= new Date(convMap[partnerId].last_message_at).getTime()) {
+          convMap[partnerId].last_message = m.content;
+          convMap[partnerId].last_message_at = m.created_at;
+        }
+
+        if (m.recipient_id === currentUser.id && !m.is_read) {
+          convMap[partnerId].unread_count++;
+        }
+      });
+
+      const convList = Object.values(convMap).sort(
+        (a: any, b: any) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      );
+
+      return NextResponse.json(convList, { headers: corsHeaders() });
+    }
+
+    if (pathname.startsWith("messages/") && method === "GET") {
+      const otherUserId = pathname.substring("messages/".length);
+      const currentUser = getUserFromToken(req, store);
+      if (!currentUser) {
+        return NextResponse.json({ detail: "Avtorizatsiya talab qilinadi." }, { status: 401, headers: corsHeaders() });
+      }
+
+      // STRICT PRIVACY: Return ONLY messages between currentUser and otherUserId
+      const msgs = (store.messages || []).filter(
+        (m: any) =>
+          (m.sender_id === currentUser.id && (m.recipient_id === otherUserId || m.recipient_username === otherUserId)) ||
+          ((m.sender_id === otherUserId || m.sender_username === otherUserId) && m.recipient_id === currentUser.id)
+      ).sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+      // Mark unread messages sent by otherUser to currentUser as read
+      msgs.forEach((m: any) => {
+        if (m.recipient_id === currentUser.id && !m.is_read) {
+          m.is_read = true;
+        }
+      });
+
+      return NextResponse.json(msgs, { headers: corsHeaders() });
+    }
+
+    if (pathname === "messages" && method === "POST") {
+      const currentUser = getUserFromToken(req, store);
+      if (!currentUser) {
+        return NextResponse.json({ detail: "Avtorizatsiya talab qilinadi." }, { status: 401, headers: corsHeaders() });
+      }
+
+      const body = await req.json();
+      const { recipient_id, content, quiz_invitation_code } = body;
+      if (!recipient_id || !content?.trim()) {
+        return NextResponse.json({ detail: "Qabul qiluvchi va xabar matni talab qilinadi." }, { status: 400, headers: corsHeaders() });
+      }
+
+      const recipient = store.users.find((u) => u.id === recipient_id || u.username === recipient_id);
+
+      const newMsg = {
+        id: "msg_" + Math.random().toString(36).substring(2, 10),
+        conversation_id: `${[currentUser.id, recipient_id].sort().join("__")}`,
+        sender_id: currentUser.id,
+        sender_username: currentUser.username,
+        sender_name: `${currentUser.first_name || ""} ${currentUser.last_name || ""}`.trim() || currentUser.username,
+        sender_avatar: currentUser.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUser.username}`,
+        recipient_id: recipient?.id || recipient_id,
+        recipient_username: recipient?.username || recipient_id,
+        recipient_name: recipient ? `${recipient.first_name || ""} ${recipient.last_name || ""}`.trim() || recipient.username : recipient_id,
+        content: content.trim(),
+        quiz_invitation_code: quiz_invitation_code || null,
+        is_read: false,
+        created_at: new Date().toISOString(),
+      };
+
+      if (!store.messages) store.messages = [];
+      store.messages.push(newMsg);
+
+      return NextResponse.json(newMsg, { status: 201, headers: corsHeaders() });
     }
 
     // --- AI CHAT ASSISTANT ---

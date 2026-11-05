@@ -102,6 +102,130 @@ export function getUserProfileOverride(userId: string): any {
   }
 }
 
+// --- DIRECT MESSAGING PRIVACY HELPERS ---
+export function getConversationKey(id1: string, id2: string): string {
+  const a = String(id1 || "").toLowerCase().trim();
+  const b = String(id2 || "").toLowerCase().trim();
+  return [a, b].sort().join("__");
+}
+
+export function getLocalDirectMessages(currentUserId: string, otherUserId: string): any[] {
+  if (typeof window === "undefined" || !currentUserId || !otherUserId) return [];
+  const convKey = getConversationKey(currentUserId, otherUserId);
+
+  const threadRaw = localStorage.getItem(`quizora_direct_thread_${convKey}`);
+  let threadMsgs: any[] = [];
+  if (threadRaw) {
+    try {
+      threadMsgs = JSON.parse(threadRaw);
+    } catch {}
+  }
+
+  const allRaw = localStorage.getItem("quizora_all_direct_messages");
+  let allMsgs: any[] = [];
+  if (allRaw) {
+    try {
+      allMsgs = JSON.parse(allRaw);
+    } catch {}
+  }
+
+  const cId = String(currentUserId).toLowerCase().trim();
+  const oId = String(otherUserId).toLowerCase().trim();
+
+  // STRICT PRIVACY FILTER:
+  const matchedFromAll = allMsgs.filter((m: any) => {
+    const sId = String(m.senderId || m.sender_id || "").toLowerCase().trim();
+    const rId = String(m.recipientId || m.recipient_id || "").toLowerCase().trim();
+    const sUser = String(m.senderUsername || m.sender_username || "").toLowerCase().trim();
+    const rUser = String(m.recipientUsername || m.recipient_username || "").toLowerCase().trim();
+
+    const isCurrentSender = sId === cId || sUser === cId;
+    const isOtherRecipient = rId === oId || rUser === oId;
+    const isOtherSender = sId === oId || sUser === oId;
+    const isCurrentRecipient = rId === cId || rUser === cId;
+
+    return (isCurrentSender && isOtherRecipient) || (isOtherSender && isCurrentRecipient);
+  });
+
+  const map = new Map<string, any>();
+  [...threadMsgs, ...matchedFromAll].forEach((m) => {
+    if (m && m.id) map.set(m.id, m);
+  });
+
+  return Array.from(map.values()).sort((a, b) => {
+    const timeA = a.timestamp || new Date(a.created_at || 0).getTime();
+    const timeB = b.timestamp || new Date(b.created_at || 0).getTime();
+    return timeA - timeB;
+  });
+}
+
+export function saveLocalDirectMessage(msg: any) {
+  if (typeof window === "undefined" || !msg) return;
+  const sId = msg.senderId || msg.sender_id;
+  const rId = msg.recipientId || msg.recipient_id;
+  if (!sId || !rId) return;
+
+  const convKey = getConversationKey(sId, rId);
+
+  const existing = getLocalDirectMessages(sId, rId);
+  if (!existing.some((m) => m.id === msg.id)) {
+    existing.push(msg);
+  }
+  localStorage.setItem(`quizora_direct_thread_${convKey}`, JSON.stringify(existing));
+
+  try {
+    const allRaw = localStorage.getItem("quizora_all_direct_messages");
+    let allMsgs: any[] = [];
+    if (allRaw) allMsgs = JSON.parse(allRaw);
+    if (!allMsgs.some((m) => m.id === msg.id)) {
+      allMsgs.push(msg);
+      localStorage.setItem("quizora_all_direct_messages", JSON.stringify(allMsgs));
+    }
+  } catch {}
+
+  window.dispatchEvent(new CustomEvent("quizora_new_message", { detail: msg }));
+}
+
+export function markLocalMessagesAsRead(currentUserId: string, otherUserId: string) {
+  if (typeof window === "undefined" || !currentUserId || !otherUserId) return;
+  const convKey = getConversationKey(currentUserId, otherUserId);
+  const msgs = getLocalDirectMessages(currentUserId, otherUserId);
+  let changed = false;
+
+  const cId = String(currentUserId).toLowerCase().trim();
+  msgs.forEach((m) => {
+    const rId = String(m.recipientId || m.recipient_id || "").toLowerCase().trim();
+    const rUser = String(m.recipientUsername || m.recipient_username || "").toLowerCase().trim();
+    if ((rId === cId || rUser === cId) && !m.read && !m.is_read) {
+      m.read = true;
+      m.is_read = true;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    localStorage.setItem(`quizora_direct_thread_${convKey}`, JSON.stringify(msgs));
+    try {
+      const allRaw = localStorage.getItem("quizora_all_direct_messages");
+      if (allRaw) {
+        const allMsgs: any[] = JSON.parse(allRaw);
+        allMsgs.forEach((m) => {
+          const rId = String(m.recipientId || m.recipient_id || "").toLowerCase().trim();
+          const rUser = String(m.recipientUsername || m.recipient_username || "").toLowerCase().trim();
+          const sId = String(m.senderId || m.sender_id || "").toLowerCase().trim();
+          const sUser = String(m.senderUsername || m.sender_username || "").toLowerCase().trim();
+          const oId = String(otherUserId).toLowerCase().trim();
+          if ((rId === cId || rUser === cId) && (sId === oId || sUser === oId)) {
+            m.read = true;
+            m.is_read = true;
+          }
+        });
+        localStorage.setItem("quizora_all_direct_messages", JSON.stringify(allMsgs));
+      }
+    } catch {}
+  }
+}
+
 export async function getAllPlatformLearners(): Promise<any[]> {
   try {
     const comm = await api.getCommunityUsers().catch(() => []);
@@ -251,6 +375,7 @@ export const api = {
   respondFriendRequest: (requestId: string, accept: boolean) =>
     request<any>(`/friends/respond?request_id=${requestId}&accept=${accept}`, { method: "POST" }),
   getMessages: (otherUserId: string) => request<any[]>(`/messages/${otherUserId}`),
+  getRecentConversations: () => request<any[]>("/messages/conversations/recent"),
   sendMessage: (recipientId: string, content: string, quizCode?: string) =>
     request<any>("/messages", {
       method: "POST",
