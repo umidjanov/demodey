@@ -1,0 +1,156 @@
+{
+  "users": [
+    {
+      "id": "u_kamola",
+      "email": "kamola@gmail.com",
+      "username": "kamola",
+      "first_name": "Kamola",
+      "last_name": "Rahimova",
+      "phone_number": "+998909998877",
+      "role": "user",
+      "is_active": true,
+      "created_at": "2026-11-05T13:00:00.000Z"
+    },
+    {
+      "id": "u_i0ie8ur6",
+      "email": "shoxrux@gmail.com",
+      "password": "Password123!",
+      "username": "shoxrux",
+      "first_name": "Shoxrux",
+      "last_name": "Mirzayev",
+      "phone_number": "+998931112233",
+      "role": "user",
+      "is_active": true,
+      "created_at": "2026-11-05T13:05:17.562Z",
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=shoxrux"
+    },
+    {
+      "id": "u_ah3ikadv",
+      "email": "student1@gmail.com",
+      "password": "Password123!",
+      "username": "student1",
+      "first_name": "Bekzod",
+      "last_name": "Aliyev",
+      "phone_number": "",
+      "role": "user",
+      "is_active": true,
+      "created_at": "2026-11-05T12:40:23.771Z",
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=student1"
+    },
+    {
+      "id": "670e00000000000000000001",
+      "_id": "670e00000000000000000001",
+      "email": "admin@quizora.com",
+      "username": "quizora_admin",
+      "hashed_password": "$2b$12$R/HfRzpW.HqbdMOzWYbWOuxR96a/q9.GS1Wz1BfMycp2miZiVC4.C",
+      "first_name": "Admin",
+      "last_name": "Quizora",
+      "role": "admin",
+      "is_active": true,
+      "is_verified": true,
+      "avatar_url": "https://api.dicebear.com/7.x/bottts/svg?seed=quizora_admin",
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "last_login_at": "2026-11-04T10:35:07.025954+00:00"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "p_u_kamola",
+      "user_id": "u_kamola",
+      "level": 1,
+      "level_title": "Bilimdon",
+      "total_xp": 0,
+      "ranking_coins": 0,
+      "coins": 0,
+      "current_streak": 1,
+      "completed_quizzes_count": 0,
+      "average_score": 0,
+      "total_questions_answered": 0,
+      "total_correct_answers": 0,
+      "total_incorrect_answers": 0
+    },
+    {
+      "id": "p_u_i0ie8ur6",
+      "user_id": "u_i0ie8ur6",
+      "level": 1,
+      "level_title": "Boshlang'ich",
+      "total_xp": 0,
+      "ranking_coins": 0,
+      "coins": 0,
+      "current_streak": 1,
+      "completed_quizzes_count": 0,
+      "average_score": 0,
+      "total_questions_answered": 0,
+      "total_correct_answers": 0,
+      "total_incorrect_answers": 0
+    },
+    {
+      "id": "p_u_ah3ikadv",
+      "user_id": "u_ah3ikadv",
+      "level": 1,
+      "level_title": "Boshlang'ich",
+      "total_xp": 0,
+      "ranking_coins": 0,
+      "coins": 0,
+      "current_streak": 1,
+      "completed_quizzes_count": 0,
+      "average_score": 0,
+      "total_questions_answered": 0,
+      "total_correct_answers": 0,
+      "total_incorrect_answers": 0
+    },
+    {
+      "user_id": "670e00000000000000000001",
+      "bio": "Lead System Architect & Content Administrator at Quizora.",
+      "level": 30,
+      "total_xp": 90100,
+      "ranking_coins": 5010,
+      "current_streak": 45,
+      "longest_streak": 60,
+      "completed_quizzes_count": 250,
+      "total_questions_answered": 2500,
+      "total_correct_answers": 2480,
+      "total_incorrect_answers": 20,
+      "average_score": 99.2,
+      "privacy_settings": {
+        "show_email": false,
+        "show_phone": false,
+        "show_activity": true,
+        "allow_invitations": true
+      },
+      "created_at": "2026-11-03T09:35:48.942576+00:00",
+      "id": "6ae9aaf50a917ab362f438d2",
+      "_id": "6ae9aaf50a917ab362f438d2",
+      "last_active_date": "2026-11-04"
+    },
+    {
+      "user_id": "[object Object]",
+      "bio": "Lead System Architect & Content Administrator at Quizora.",
+      "level": 30,
+      "total_xp": 90100,
+      "ranking_coins": 5010,
+      "current_streak": 45,
+      "longest_streak": 60,
+      "completed_quizzes_count": 250,
+      "total_questions_answered": 2500,
+      "total_correct_answers": 2480,
+      "total_incorrect_answers": 20,
+      "average_score": 99.2,
+      "privacy_settings": {
+        "show_email": false,
+        "show_phone": false,
+        "show_activity": true,
+        "allow_invitations": true
+      },
+      "created_at": {
+        "__date__": "2026-11-03T09:35:48.942576+00:00"
+      },
+      "_id": {
+        "__oid__": "6ae9aaf50a917ab362f438d2"
+      },
+      "last_active_date": "2026-11-04"
+    }
+  ],
+  "messages": [],
+  "discipline_tasks": []
+}

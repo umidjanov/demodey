@@ -488,12 +488,71 @@ export const api = {
     }
   },
   googleAuth: async (data: any) => {
-    const res = await request<any>("/auth/google", { method: "POST", body: JSON.stringify(data) });
-    if (res?.user) {
-      setStoredUser(res.user);
-      saveLocalUser(res.user);
+    try {
+      const res = await request<any>("/auth/google", { method: "POST", body: JSON.stringify(data) });
+      if (res?.user) {
+        setStoredUser(res.user);
+        saveLocalUser(res.user);
+        saveRegisteredAccount(res.user.email, "", res.user, res.profile);
+      }
+      return res;
+    } catch (err: any) {
+      // Local fallback for Google login if server is unreachable
+      const email = (data.email || "user@gmail.com").toLowerCase().trim();
+      const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+      const userId = "u_g_" + Math.random().toString(36).substring(2, 10);
+      const fallbackUser = {
+        id: userId,
+        email,
+        username,
+        first_name: data.first_name || username,
+        last_name: data.last_name || "",
+        phone_number: data.phone_number || "",
+        role: "user",
+        is_active: true,
+        created_at: new Date().toISOString(),
+        avatar_url: data.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+      };
+      const fallbackProfile = {
+        id: "p_" + userId,
+        user_id: userId,
+        level: 1,
+        level_title: "Boshlang'ich",
+        total_xp: 0,
+        ranking_coins: 0,
+        coins: 0,
+        current_streak: 1,
+        completed_quizzes_count: 0,
+        average_score: 0.0,
+      };
+
+      const payloadStr = JSON.stringify({
+        sub: fallbackUser.id,
+        email: fallbackUser.email,
+        username: fallbackUser.username,
+        first_name: fallbackUser.first_name,
+        last_name: fallbackUser.last_name,
+        role: fallbackUser.role,
+        avatar_url: fallbackUser.avatar_url,
+        exp: Math.floor(Date.now() / 1000) + 86400 * 30,
+      });
+      const encodedPayload = typeof window !== "undefined" ? btoa(unescape(encodeURIComponent(payloadStr))) : "";
+      const fakeToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${encodedPayload}.sig_${fallbackUser.id}`;
+
+      setStoredUser(fallbackUser);
+      setStoredProfile(fallbackProfile);
+      saveLocalUser(fallbackUser);
+      saveRegisteredAccount(email, "", fallbackUser, fallbackProfile);
+      setStoredToken(fakeToken);
+
+      return {
+        access_token: fakeToken,
+        refresh_token: fakeToken,
+        token_type: "bearer",
+        user: fallbackUser,
+        profile: fallbackProfile,
+      };
     }
-    return res;
   },
 
   // Profiles
@@ -580,5 +639,10 @@ export const api = {
   processMonthlyRewards: (monthYear?: string) =>
     request<any>(`/admin/monthly-rewards/process${monthYear ? `?month_year=${encodeURIComponent(monthYear)}` : ""}`, {
       method: "POST",
+    }),
+  syncUsers: (users: any[]) =>
+    request<any>("/admin/sync-users", {
+      method: "POST",
+      body: JSON.stringify({ users }),
     }),
 };

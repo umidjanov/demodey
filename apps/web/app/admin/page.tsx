@@ -10,6 +10,8 @@ import {
   getLocalRegisteredUsers,
   getDeletedUserIds,
   recordDeletedUserId,
+  getRegisteredAccounts,
+  getStoredUser,
 } from "@/src/lib/api";
 import {
   ShieldAlert,
@@ -126,52 +128,119 @@ Bio: ${u.bio || "—"}`;
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [s, u] = await Promise.all([
+      const [s, u, comm] = await Promise.all([
         api.getAdminStats().catch(() => null),
         api.getAdminUsers().catch(() => []),
+        api.getCommunityUsers().catch(() => []),
       ]);
       const deletedIds = getDeletedUserIds();
       const localUsers = getLocalRegisteredUsers();
+      const registeredAccounts = getRegisteredAccounts();
+      const storedUser = getStoredUser();
 
       const combinedMap = new Map<string, any>();
 
+      // 1. First add from server admin users
       (Array.isArray(u) ? u : []).forEach((item: any) => {
-        if (item?.id && !deletedIds.includes(item.id)) {
+        if (item?.id) {
           combinedMap.set(item.id, item);
         }
       });
 
-      localUsers.forEach((item: any) => {
-        if (item?.id && !deletedIds.includes(item.id)) {
-          if (!combinedMap.has(item.id)) {
-            combinedMap.set(item.id, {
-              id: item.id,
-              email: item.email || "",
-              username: item.username || item.email?.split("@")[0] || "user",
-              first_name: item.first_name || "",
-              last_name: item.last_name || "",
-              phone_number: item.phone_number || "",
-              role: item.role || "user",
-              is_active: item.is_active ?? true,
-              created_at: item.created_at || new Date().toISOString(),
-              level: item.level || 1,
-              level_title: item.level_title || "Bilimdon",
-              total_xp: item.total_xp || 0,
-              ranking_coins: item.ranking_coins || item.coins || 0,
-              coins: item.coins || 0,
-              current_streak: item.current_streak || 1,
-              completed_quizzes_count: item.completed_quizzes_count || 0,
-              total_questions_answered: item.total_questions_answered || 0,
-              total_correct_answers: item.total_correct_answers || 0,
-              total_incorrect_answers: item.total_incorrect_answers || 0,
-              average_score: item.average_score || 0,
-              bio: item.bio || "Quizora foydalanuvchisi",
-            });
-          }
+      // 2. Add from community users (guaranteed public registered learners)
+      (Array.isArray(comm) ? comm : []).forEach((item: any) => {
+        if (item?.id && !combinedMap.has(item.id)) {
+          combinedMap.set(item.id, {
+            ...item,
+            role: item.role || "user",
+          });
         }
       });
 
-      const finalList = Array.from(combinedMap.values());
+      // 3. Add from local registered users in this browser
+      localUsers.forEach((item: any) => {
+        if (item?.id) {
+          const existing = combinedMap.get(item.id);
+          combinedMap.set(item.id, {
+            id: item.id,
+            email: item.email || existing?.email || "",
+            username: item.username || existing?.username || item.email?.split("@")[0] || "user",
+            first_name: item.first_name || existing?.first_name || "",
+            last_name: item.last_name || existing?.last_name || "",
+            phone_number: item.phone_number || existing?.phone_number || "",
+            role: item.role || existing?.role || "user",
+            is_active: item.is_active ?? existing?.is_active ?? true,
+            created_at: item.created_at || existing?.created_at || new Date().toISOString(),
+            avatar_url: item.avatar_url || existing?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${item.username || item.id}`,
+            level: item.level || existing?.level || 1,
+            level_title: item.level_title || existing?.level_title || "Bilimdon",
+            total_xp: item.total_xp ?? existing?.total_xp ?? 0,
+            ranking_coins: item.ranking_coins || item.coins || existing?.ranking_coins || existing?.coins || 0,
+            coins: item.coins || existing?.coins || 0,
+            current_streak: item.current_streak || existing?.current_streak || 1,
+            completed_quizzes_count: item.completed_quizzes_count ?? existing?.completed_quizzes_count ?? 0,
+            total_questions_answered: item.total_questions_answered ?? existing?.total_questions_answered ?? 0,
+            total_correct_answers: item.total_correct_answers ?? existing?.total_correct_answers ?? 0,
+            total_incorrect_answers: item.total_incorrect_answers ?? existing?.total_incorrect_answers ?? 0,
+            average_score: item.average_score ?? existing?.average_score ?? 0,
+            bio: item.bio || existing?.bio || "Quizora foydalanuvchisi",
+          });
+        }
+      });
+
+      // 4. Add accounts registered on this browser (saved during registration)
+      Object.values(registeredAccounts).forEach((acc: any) => {
+        const accUser = acc?.user;
+        if (accUser?.id && !combinedMap.has(accUser.id)) {
+          combinedMap.set(accUser.id, {
+            id: accUser.id,
+            email: accUser.email || acc.email || "",
+            username: accUser.username || acc.email?.split("@")[0] || "user",
+            first_name: accUser.first_name || "",
+            last_name: accUser.last_name || "",
+            phone_number: accUser.phone_number || "",
+            role: accUser.role || "user",
+            is_active: accUser.is_active ?? true,
+            created_at: accUser.created_at || acc.saved_at || new Date().toISOString(),
+            avatar_url: accUser.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${accUser.username || accUser.id}`,
+            level: acc.profile?.level || 1,
+            level_title: acc.profile?.level_title || "Bilimdon",
+            total_xp: acc.profile?.total_xp || 0,
+            ranking_coins: acc.profile?.ranking_coins || acc.profile?.coins || 0,
+            coins: acc.profile?.coins || 0,
+            current_streak: acc.profile?.current_streak || 1,
+            completed_quizzes_count: acc.profile?.completed_quizzes_count || 0,
+            total_questions_answered: acc.profile?.total_questions_answered || 0,
+            total_correct_answers: acc.profile?.total_correct_answers || 0,
+            total_incorrect_answers: acc.profile?.total_incorrect_answers || 0,
+            average_score: acc.profile?.average_score || 0,
+            bio: accUser.bio || "Quizora foydalanuvchisi",
+          });
+        }
+      });
+
+      // 5. Stored user if not admin
+      if (storedUser && storedUser.role !== "admin" && storedUser.id && !combinedMap.has(storedUser.id)) {
+        combinedMap.set(storedUser.id, {
+          ...storedUser,
+          level: storedUser.level || 1,
+          level_title: storedUser.level_title || "Bilimdon",
+          total_xp: storedUser.total_xp || 0,
+          ranking_coins: storedUser.ranking_coins || storedUser.coins || 0,
+          coins: storedUser.coins || 0,
+          current_streak: storedUser.current_streak || 1,
+          completed_quizzes_count: storedUser.completed_quizzes_count || 0,
+          average_score: storedUser.average_score || 0,
+          bio: storedUser.bio || "Quizora foydalanuvchisi",
+        });
+      }
+
+      // Filter out deleted IDs only if they were explicitly deleted
+      let finalList = Array.from(combinedMap.values());
+      if (deletedIds.length > 0) {
+        finalList = finalList.filter((item) => !deletedIds.includes(item.id));
+      }
+
       setUsersList(finalList);
 
       setStats({
@@ -183,6 +252,11 @@ Bio: ${u.bio || "—"}`;
           admins_count: finalList.filter((x) => x.role === "admin").length,
         },
       });
+
+      // Sync combined list to server in background so server also has all users
+      if (finalList.length > 0) {
+        api.syncUsers(finalList).catch(() => {});
+      }
     } catch (err: any) {
       console.error("Failed to load admin data:", err);
     } finally {
