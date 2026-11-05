@@ -15,11 +15,13 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
     profiles: any[];
     messages: any[];
     discipline_tasks: any[];
+    deleted_user_ids: string[];
   } = {
     users: [],
     profiles: [],
     messages: [],
     discipline_tasks: [],
+    deleted_user_ids: [],
   };
 
   const usersMap = new Map<string, any>();
@@ -32,6 +34,14 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
         const content = fs.readFileSync(filePath, "utf-8");
         const parsed = JSON.parse(content);
 
+        if (Array.isArray(parsed.deleted_user_ids)) {
+          parsed.deleted_user_ids.forEach((id: string) => {
+            if (!merged.deleted_user_ids.includes(String(id))) {
+              merged.deleted_user_ids.push(String(id));
+            }
+          });
+        }
+
         let uList: any[] = [];
         if (Array.isArray(parsed.users)) {
           uList = parsed.users;
@@ -42,6 +52,9 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
         uList.forEach((u: any) => {
           const id = u.id || (u._id && (u._id.__oid__ || u._id)) || u.email;
           if (id && !usersMap.has(String(id))) {
+            if (merged.deleted_user_ids.includes(String(id))) {
+              return; // Do NOT load deleted user
+            }
             usersMap.set(String(id), {
               ...u,
               id: String(id),
@@ -62,6 +75,9 @@ function loadPersistedStore(): Partial<GlobalStore> | null {
         pList.forEach((p: any) => {
           const uId = p.user_id || (p.user_id && p.user_id.__oid__) || p.id;
           if (uId && !profilesMap.has(String(uId))) {
+            if (merged.deleted_user_ids.includes(String(uId))) {
+              return; // Do NOT load deleted profile
+            }
             profilesMap.set(String(uId), { ...p, user_id: String(uId) });
           }
         });
@@ -94,6 +110,7 @@ function savePersistedStore(store: GlobalStore) {
     profiles: store.profiles,
     messages: store.messages,
     discipline_tasks: store.discipline_tasks,
+    deleted_user_ids: store.deleted_user_ids || [],
   };
   const jsonStr = JSON.stringify(toSave, null, 2);
 
@@ -126,6 +143,7 @@ interface GlobalStore {
   community: any[];
   discipline_tasks: any[];
   messages: any[];
+  deleted_user_ids: string[];
 }
 
 declare global {
@@ -137,6 +155,7 @@ function getStore(): GlobalStore {
   if (!global.__QUIZORA_STORE__) {
     const raw = initialData as any;
     const persisted = loadPersistedStore();
+    const deletedUserIds = persisted?.deleted_user_ids || [];
 
     const baseUsers = (raw.users || []).map((u: any) => ({
       ...u,
@@ -148,7 +167,9 @@ function getStore(): GlobalStore {
     const persistedUsers = persisted?.users || [];
     const usersMap = new Map();
     [...baseUsers, ...persistedUsers].forEach((u) => {
-      usersMap.set(u.id, u);
+      if (!deletedUserIds.includes(String(u.id))) {
+        usersMap.set(String(u.id), u);
+      }
     });
 
     const baseProfiles = (raw.user_profiles || []).map((p: any) => ({
@@ -160,13 +181,15 @@ function getStore(): GlobalStore {
     const persistedProfiles = persisted?.profiles || [];
     const profilesMap = new Map();
     [...baseProfiles, ...persistedProfiles].forEach((p) => {
-      profilesMap.set(p.user_id, p);
+      if (!deletedUserIds.includes(String(p.user_id))) {
+        profilesMap.set(String(p.user_id), p);
+      }
     });
 
     global.__QUIZORA_STORE__ = {
       users: Array.from(usersMap.values()),
       profiles: Array.from(profilesMap.values()),
-      attempts: raw.quiz_attempts || [],
+      attempts: (raw.quiz_attempts || []).filter((a: any) => !deletedUserIds.includes(String(a.user_id))),
       categories: raw.categories || [],
       topics: raw.topics || [],
       questions: raw.questions || [],
@@ -174,8 +197,13 @@ function getStore(): GlobalStore {
       achievements: raw.achievements || [],
       friends: [],
       community: [],
-      discipline_tasks: persisted?.discipline_tasks || raw.discipline_tasks || [],
-      messages: persisted?.messages || [],
+      discipline_tasks: (persisted?.discipline_tasks || raw.discipline_tasks || []).filter((t: any) => !deletedUserIds.includes(String(t.user_id))),
+      messages: (persisted?.messages || []).filter(
+        (m: any) =>
+          !deletedUserIds.includes(String(m.sender_id || m.senderId)) &&
+          !deletedUserIds.includes(String(m.recipient_id || m.recipientId))
+      ),
+      deleted_user_ids: deletedUserIds,
     };
 
     // Ensure root admin exists
@@ -243,15 +271,27 @@ function getUserFromToken(req: NextRequest, store: GlobalStore) {
       return null;
     }
 
+    const subStr = String(decoded.sub || "");
+    if (store.deleted_user_ids && store.deleted_user_ids.includes(subStr)) {
+      return null;
+    }
+
     let user = store.users.find(
       (u) =>
         u.id === decoded.sub ||
         (u.email && decoded.email && u.email.toLowerCase() === decoded.email.toLowerCase())
     );
 
+    if (user && store.deleted_user_ids && store.deleted_user_ids.includes(String(user.id))) {
+      return null;
+    }
+
     // If user is not yet in memory store, restore from decoded token!
     const isAdminEmail = (decoded.email && decoded.email.toLowerCase() === "admin@quizora.com") || decoded.sub === "670e00000000000000000001";
     if (!user && decoded.sub) {
+      if (store.deleted_user_ids && store.deleted_user_ids.includes(subStr)) {
+        return null;
+      }
       user = {
         id: decoded.sub,
         email: decoded.email || `${decoded.username || "user"}@quizora.com`,
@@ -441,8 +481,8 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       }
 
       const user = store.users.find((u) => u.email && u.email.toLowerCase() === cleanEmail);
-      if (!user) {
-        return NextResponse.json({ detail: "Email yoki parol noto'g'ri." }, { status: 401, headers: corsHeaders() });
+      if (!user || (store.deleted_user_ids && store.deleted_user_ids.includes(String(user.id)))) {
+        return NextResponse.json({ detail: "Email yoki parol noto'g'ri yoki hisob butunlay o'chirilgan." }, { status: 401, headers: corsHeaders() });
       }
 
       // Check password if saved
@@ -492,6 +532,9 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
       const cleanEmail = (email || "user_" + Math.random().toString(36).substring(2, 7) + "@gmail.com").toLowerCase().trim();
       let user = store.users.find((u) => u.email.toLowerCase() === cleanEmail);
+      if (user && store.deleted_user_ids && store.deleted_user_ids.includes(String(user.id))) {
+        return NextResponse.json({ detail: "Ushbu hisob butunlay o'chirilgan." }, { status: 403, headers: corsHeaders() });
+      }
       if (!user) {
         const userId = "u_g_" + Math.random().toString(36).substring(2, 9);
         const usernameBase = cleanEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "");
@@ -806,7 +849,10 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const currentUser = getUserFromToken(req, store);
 
       let attempts = store.attempts.filter(
-        (a) => a.status === "completed" && (!currentUser || a.user_id === currentUser.id)
+        (a) =>
+          a.status === "completed" &&
+          (!currentUser || a.user_id === currentUser.id) &&
+          (!store.deleted_user_ids || !store.deleted_user_ids.includes(String(a.user_id)))
       );
 
       if (difficulty) {
@@ -861,19 +907,21 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         return NextResponse.json({ detail: "Administrator huquqi talab qilinadi." }, { status: 403, headers: corsHeaders() });
       }
 
+      const nonDeletedUsers = store.users.filter((u) => !store.deleted_user_ids?.includes(String(u.id)));
+
       return NextResponse.json(
         {
           kpis: {
-            total_registered_users: store.users.length,
-            active_users_count: store.users.filter((u) => u.is_active).length,
-            admins_count: store.users.filter((u) => u.role === "admin").length,
+            total_registered_users: nonDeletedUsers.length,
+            active_users_count: nonDeletedUsers.filter((u) => u.is_active).length,
+            admins_count: nonDeletedUsers.filter((u) => u.role === "admin").length,
             total_questions_in_pool: store.questions.length,
-            total_quiz_attempts_completed: store.attempts.length,
+            total_quiz_attempts_completed: store.attempts.filter((a) => !store.deleted_user_ids?.includes(String(a.user_id))).length,
             total_active_categories: store.categories.length,
             ai_evaluation_queue_health: "Healthy (0 pending)",
             average_system_latency_ms: 18,
           },
-          recent_activity: store.users.slice(0, 5).map((u) => ({
+          recent_activity: nonDeletedUsers.slice(0, 5).map((u) => ({
             action: "Foydalanuvchi tizimda ro'yxatdan o'tgan",
             user: u.username,
             time: u.created_at ? u.created_at.split("T")[0] : "Bugun",
@@ -892,7 +940,9 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         return NextResponse.json({ detail: "Administrator huquqi talab qilinadi." }, { status: 403, headers: corsHeaders() });
       }
 
-      const usersWithProfiles = store.users.map((u) => {
+      const nonDeletedUsers = store.users.filter((u) => !store.deleted_user_ids?.includes(String(u.id)));
+
+      const usersWithProfiles = nonDeletedUsers.map((u) => {
         const p = store.profiles.find((x) => x.user_id === u.id) || {};
         return {
           id: u.id,
@@ -929,6 +979,10 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
       incoming.forEach((u: any) => {
         if (!u || !u.id) return;
+        const uId = String(u.id);
+        if (store.deleted_user_ids && store.deleted_user_ids.includes(uId)) {
+          return; // Do NOT resurrect deleted users!
+        }
         const existingIdx = store.users.findIndex(
           (x) => x.id === u.id || (x.email && u.email && x.email.toLowerCase() === u.email.toLowerCase())
         );
@@ -991,10 +1045,55 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
 
     if (pathname.startsWith("admin/users/") && method === "DELETE") {
       const userId = pathname.split("/")[2];
-      store.users = store.users.filter((x) => x.id !== userId);
-      store.profiles = store.profiles.filter((x) => x.user_id !== userId);
+      const uStr = String(userId);
+
+      // Protect root admin from deletion
+      if (uStr === "670e00000000000000000001") {
+        return NextResponse.json({ detail: "Asosiy administrator hisobini o'chirib bo'lmaydi." }, { status: 400, headers: corsHeaders() });
+      }
+
+      if (!store.deleted_user_ids) {
+        store.deleted_user_ids = [];
+      }
+      if (!store.deleted_user_ids.includes(uStr)) {
+        store.deleted_user_ids.push(uStr);
+      }
+
+      const target = store.users.find((x) => String(x.id) === uStr);
+      const targetUsername = target?.username?.toLowerCase();
+      const targetEmail = target?.email?.toLowerCase();
+
+      // 1. Purge from users
+      store.users = store.users.filter((x) => String(x.id) !== uStr && (!targetEmail || x.email?.toLowerCase() !== targetEmail));
+
+      // 2. Purge from profiles
+      store.profiles = store.profiles.filter((x) => String(x.user_id) !== uStr && String(x.id) !== uStr);
+
+      // 3. Purge from attempts
+      store.attempts = (store.attempts || []).filter((a) => String(a.user_id) !== uStr);
+
+      // 4. Purge from discipline tasks
+      store.discipline_tasks = (store.discipline_tasks || []).filter((t) => String(t.user_id) !== uStr);
+
+      // 5. Purge from messages
+      store.messages = (store.messages || []).filter((m) => {
+        const sId = String(m.sender_id || m.senderId || "");
+        const rId = String(m.recipient_id || m.recipientId || "");
+        const sU = String(m.sender_username || m.senderUsername || "").toLowerCase();
+        const rU = String(m.recipient_username || m.recipientUsername || "").toLowerCase();
+
+        if (sId === uStr || rId === uStr) return false;
+        if (targetUsername && (sU === targetUsername || rU === targetUsername)) return false;
+        return true;
+      });
+
+      // 6. Purge from friends
+      store.friends = (store.friends || []).filter((f) => String(f.user_id) !== uStr && String(f.friend_id) !== uStr);
+
+      // 7. Persist to disk immediately
       savePersistedStore(store);
-      return NextResponse.json({ success: true }, { headers: corsHeaders() });
+
+      return NextResponse.json({ success: true, deleted_id: userId }, { headers: corsHeaders() });
     }
 
     if (pathname === "admin/purge-fake-users" && method === "POST") {
@@ -1009,7 +1108,12 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const currentUser = getUserFromToken(req, store);
       const isViewerAdmin = currentUser?.role === "admin";
       const leaders = store.users
-        .filter((u) => isViewerAdmin || (u.role !== "admin" && u.email !== "admin@quizora.com"))
+        .filter((u) => {
+          const uStr = String(u.id);
+          if (store.deleted_user_ids && store.deleted_user_ids.includes(uStr)) return false;
+          if (!isViewerAdmin && (u.role === "admin" || u.email === "admin@quizora.com")) return false;
+          return true;
+        })
         .map((u, idx) => {
           const p = store.profiles.find((x) => x.user_id === u.id) || {};
           return {
@@ -1052,6 +1156,8 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const isViewerAdmin = currentUser?.role === "admin";
       const friends = store.users
         .filter((u) => {
+          const uStr = String(u.id);
+          if (store.deleted_user_ids && store.deleted_user_ids.includes(uStr)) return false;
           if (currentUser && u.id === currentUser.id) return false;
           if (!isViewerAdmin && (u.role === "admin" || u.email === "admin@quizora.com")) return false;
           return true;
@@ -1090,7 +1196,12 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const currentUser = getUserFromToken(req, store);
       const isViewerAdmin = currentUser?.role === "admin";
       const list = store.users
-        .filter((u) => isViewerAdmin || (u.role !== "admin" && u.email !== "admin@quizora.com"))
+        .filter((u) => {
+          const uStr = String(u.id);
+          if (store.deleted_user_ids && store.deleted_user_ids.includes(uStr)) return false;
+          if (!isViewerAdmin && (u.role === "admin" || u.email === "admin@quizora.com")) return false;
+          return true;
+        })
         .map((u) => {
           const p = store.profiles.find((x) => x.user_id === u.id) || {};
           return {
@@ -1132,13 +1243,22 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       }
 
       const allMsgs = store.messages || [];
-      const userMsgs = allMsgs.filter(
-        (m: any) => m.sender_id === currentUser.id || m.recipient_id === currentUser.id
-      );
+      const userMsgs = allMsgs.filter((m: any) => {
+        const sId = String(m.sender_id || m.senderId || "");
+        const rId = String(m.recipient_id || m.recipientId || "");
+        if (store.deleted_user_ids && (store.deleted_user_ids.includes(sId) || store.deleted_user_ids.includes(rId))) {
+          return false;
+        }
+        return sId === currentUser.id || rId === currentUser.id;
+      });
 
       const convMap: { [partnerId: string]: any } = {};
       userMsgs.forEach((m: any) => {
         const partnerId = m.sender_id === currentUser.id ? m.recipient_id : m.sender_id;
+        const pIdStr = String(partnerId);
+        if (store.deleted_user_ids && store.deleted_user_ids.includes(pIdStr)) {
+          return;
+        }
         const partnerUser = store.users.find((u) => u.id === partnerId || u.username === partnerId);
         const partnerProfile = store.profiles.find((p) => p.user_id === partnerId) || {};
 
@@ -1180,6 +1300,10 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         return NextResponse.json({ detail: "Avtorizatsiya talab qilinadi." }, { status: 401, headers: corsHeaders() });
       }
 
+      if (store.deleted_user_ids && store.deleted_user_ids.includes(String(otherUserId))) {
+        return NextResponse.json([], { headers: corsHeaders() });
+      }
+
       // STRICT PRIVACY: Return ONLY messages between currentUser and otherUserId
       const msgs = (store.messages || []).filter(
         (m: any) =>
@@ -1207,6 +1331,10 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const { recipient_id, content, quiz_invitation_code } = body;
       if (!recipient_id || !content?.trim()) {
         return NextResponse.json({ detail: "Qabul qiluvchi va xabar matni talab qilinadi." }, { status: 400, headers: corsHeaders() });
+      }
+
+      if (store.deleted_user_ids && store.deleted_user_ids.includes(String(recipient_id))) {
+        return NextResponse.json({ detail: "Foydalanuvchi mavjud emas yoki butunlay o'chirilgan." }, { status: 404, headers: corsHeaders() });
       }
 
       const recipient = store.users.find((u) => u.id === recipient_id || u.username === recipient_id);

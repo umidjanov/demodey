@@ -11,7 +11,7 @@ export function LeaderboardWidget() {
   const [podium, setPodium] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchPodium = () => {
     api
       .getLeaderboard("all_time")
       .then((res) => {
@@ -21,6 +21,22 @@ export function LeaderboardWidget() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchPodium();
+
+    const handleDeleted = () => {
+      fetchPodium();
+    };
+
+    window.addEventListener("quizora_user_deleted", handleDeleted);
+    window.addEventListener("storage", handleDeleted);
+
+    return () => {
+      window.removeEventListener("quizora_user_deleted", handleDeleted);
+      window.removeEventListener("storage", handleDeleted);
+    };
   }, []);
 
   return (

@@ -9,6 +9,7 @@ import {
   setStoredUser,
   getStoredProfile,
   setStoredProfile,
+  getDeletedUserIds,
 } from "@/src/lib/api";
 
 interface User {
@@ -90,19 +91,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(updatedUser);
         setStoredUser(updatedUser);
       }
-    } catch (err) {
-      // DO NOT wipe the session on network or temporary error!
-      // Session is preserved seamlessly.
+    } catch (err: any) {
+      if (err?.message?.includes("o'chirilgan") || err?.message?.includes("401") || err?.message?.includes("403")) {
+        const deleted = getDeletedUserIds();
+        const current = getStoredUser();
+        if (current && deleted.includes(String(current.id))) {
+          logout();
+          return;
+        }
+      }
       console.warn("Silent profile sync:", err);
     }
   };
 
   useEffect(() => {
+    const deleted = getDeletedUserIds();
+    const cur = getStoredUser();
+    if (cur && deleted.includes(String(cur.id))) {
+      logout();
+      return;
+    }
+
     const savedToken = getStoredToken();
     if (savedToken) {
       setToken(savedToken);
       fetchProfile();
     }
+
+    const handleDeleted = (e: any) => {
+      const deletedId = e?.detail?.userId;
+      const current = getStoredUser();
+      if (
+        (deletedId && current && String(current.id) === String(deletedId)) ||
+        (current && getDeletedUserIds().includes(String(current.id)))
+      ) {
+        logout();
+      }
+    };
+
+    window.addEventListener("quizora_user_deleted", handleDeleted);
+    window.addEventListener("storage", handleDeleted);
+
+    return () => {
+      window.removeEventListener("quizora_user_deleted", handleDeleted);
+      window.removeEventListener("storage", handleDeleted);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {

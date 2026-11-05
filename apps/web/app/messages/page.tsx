@@ -13,6 +13,7 @@ import {
   getLocalDirectMessages,
   saveLocalDirectMessage,
   markLocalMessagesAsRead,
+  getDeletedUserIds,
 } from "@/src/lib/api";
 import { UserProfileModal } from "@/src/components/profile/UserProfileModal";
 import {
@@ -123,6 +124,7 @@ function MessagesContent() {
 
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("quizora_new_message", handleStorageChange);
+    window.addEventListener("quizora_user_deleted", handleStorageChange);
 
     // Periodic sync every 2.5 seconds
     const interval = setInterval(() => {
@@ -132,6 +134,7 @@ function MessagesContent() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("quizora_new_message", handleStorageChange);
+      window.removeEventListener("quizora_user_deleted", handleStorageChange);
       clearInterval(interval);
     };
   }, [currentUser?.id, queryUser]);
@@ -156,11 +159,16 @@ function MessagesContent() {
     if (!currentUser) return;
 
     try {
+      const deletedIds = getDeletedUserIds();
+      if (activeFriend && deletedIds.includes(String(activeFriend.id))) {
+        setActiveFriend(null);
+      }
+
       // 1. Fetch all platform learners
       const learners = await getAllPlatformLearners();
-      // Exclude current user from learners list
+      // Exclude current user and deleted users from learners list
       const otherLearners = learners.filter(
-        (l) => l.id !== currentUser.id && l.username !== currentUser.username
+        (l) => l.id !== currentUser.id && l.username !== currentUser.username && !deletedIds.includes(String(l.id))
       );
       setAllLearners(otherLearners);
 
@@ -176,12 +184,17 @@ function MessagesContent() {
         if (raw) allDirectMsgs = JSON.parse(raw);
       } catch {}
 
-      // Filter only messages where currentUser is sender or recipient
+      // Filter only messages where currentUser is sender or recipient and neither party is deleted
       const myMsgs = allDirectMsgs.filter((m: any) => {
         const sId = String(m.senderId || m.sender_id || "").toLowerCase();
         const rId = String(m.recipientId || m.recipient_id || "").toLowerCase();
         const sUser = String(m.senderUsername || m.sender_username || "").toLowerCase();
         const rUser = String(m.recipientUsername || m.recipient_username || "").toLowerCase();
+
+        if (deletedIds.includes(sId) || deletedIds.includes(rId)) {
+          return false;
+        }
+
         return sId === cId || sUser === cUser || rId === cId || rUser === cUser;
       });
 
@@ -198,6 +211,10 @@ function MessagesContent() {
         const partnerIdentifier = isMeSender ? (rId || rUser) : (sId || sUser);
         const partnerUsername = isMeSender ? rUser : sUser;
 
+        if (deletedIds.includes(String(partnerIdentifier))) {
+          return;
+        }
+
         // Find learner details from otherLearners
         const learnerDetails = otherLearners.find(
           (l) =>
@@ -207,6 +224,9 @@ function MessagesContent() {
         );
 
         const partnerId = learnerDetails?.id || partnerIdentifier;
+        if (deletedIds.includes(String(partnerId))) {
+          return;
+        }
         const partnerName =
           learnerDetails?.first_name
             ? `${learnerDetails.first_name} ${learnerDetails.last_name || ""}`.trim()

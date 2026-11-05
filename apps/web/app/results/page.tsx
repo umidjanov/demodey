@@ -41,6 +41,18 @@ export default function MyResultsPage() {
 
   useEffect(() => {
     loadAllData();
+
+    const handleDeleted = () => {
+      loadAllData();
+    };
+
+    window.addEventListener("quizora_user_deleted", handleDeleted);
+    window.addEventListener("storage", handleDeleted);
+
+    return () => {
+      window.removeEventListener("quizora_user_deleted", handleDeleted);
+      window.removeEventListener("storage", handleDeleted);
+    };
   }, [difficultyFilter]);
 
   const loadAllData = async () => {

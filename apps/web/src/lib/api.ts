@@ -93,15 +93,21 @@ export function getLocalRegisteredUsers(): any[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem("quizora_registered_users");
-    return raw ? JSON.parse(raw) : [];
+    const list = raw ? JSON.parse(raw) : [];
+    const deleted = getDeletedUserIds();
+    return (Array.isArray(list) ? list : []).filter((u: any) => u?.id && !deleted.includes(String(u.id)));
   } catch {
     return [];
   }
 }
 
 export function saveLocalUser(user: any) {
-  if (typeof window === "undefined" || !user) return;
+  if (typeof window === "undefined" || !user || !user.id) return;
   try {
+    const deleted = getDeletedUserIds();
+    if (deleted.includes(String(user.id))) {
+      return; // Do NOT save or resurrect deleted user!
+    }
     const users = getLocalRegisteredUsers();
     const existingIndex = users.findIndex((u) => u.id === user.id || u.email === user.email);
     if (existingIndex >= 0) {
@@ -110,10 +116,6 @@ export function saveLocalUser(user: any) {
       users.unshift(user);
     }
     localStorage.setItem("quizora_registered_users", JSON.stringify(users));
-
-    // Remove from deleted list if it was deleted previously
-    const deleted = getDeletedUserIds().filter((id) => id !== user.id);
-    localStorage.setItem("quizora_deleted_user_ids", JSON.stringify(deleted));
   } catch {}
 }
 
@@ -129,14 +131,70 @@ export function getDeletedUserIds(): string[] {
 
 export function recordDeletedUserId(userId: string) {
   if (typeof window === "undefined" || !userId) return;
+  const uIdStr = String(userId);
   try {
     const deleted = getDeletedUserIds();
-    if (!deleted.includes(userId)) {
-      deleted.push(userId);
+    if (!deleted.includes(uIdStr)) {
+      deleted.push(uIdStr);
       localStorage.setItem("quizora_deleted_user_ids", JSON.stringify(deleted));
     }
-    const users = getLocalRegisteredUsers().filter((u) => u.id !== userId);
-    localStorage.setItem("quizora_registered_users", JSON.stringify(users));
+
+    // 1. Purge from quizora_registered_users
+    const rawUsers = localStorage.getItem("quizora_registered_users");
+    if (rawUsers) {
+      const parsed = JSON.parse(rawUsers);
+      const remaining = (Array.isArray(parsed) ? parsed : []).filter((u: any) => String(u?.id) !== uIdStr);
+      localStorage.setItem("quizora_registered_users", JSON.stringify(remaining));
+    }
+
+    // 2. Purge from quizora_registered_accounts
+    const accounts = getRegisteredAccounts();
+    let accountsUpdated = false;
+    for (const em of Object.keys(accounts)) {
+      if (String(accounts[em]?.user?.id) === uIdStr || String(accounts[em]?.email) === uIdStr) {
+        delete accounts[em];
+        accountsUpdated = true;
+      }
+    }
+    if (accountsUpdated) {
+      localStorage.setItem("quizora_registered_accounts", JSON.stringify(accounts));
+    }
+
+    // 3. Purge profile override
+    localStorage.removeItem(`quizora_profile_${uIdStr}`);
+
+    // 4. Purge direct messages
+    try {
+      const allRaw = localStorage.getItem("quizora_all_direct_messages");
+      if (allRaw) {
+        const msgs = JSON.parse(allRaw);
+        const remaining = (Array.isArray(msgs) ? msgs : []).filter((m: any) => {
+          const s = String(m.senderId || m.sender_id || "");
+          const r = String(m.recipientId || m.recipient_id || "");
+          return s !== uIdStr && r !== uIdStr;
+        });
+        localStorage.setItem("quizora_all_direct_messages", JSON.stringify(remaining));
+      }
+
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("quizora_direct_thread_") && key.includes(uIdStr.toLowerCase())) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch {}
+
+    // 5. If deleted user is current user, logout immediately
+    const currentUser = getStoredUser();
+    if (currentUser && String(currentUser.id) === uIdStr) {
+      setStoredToken(null);
+      setStoredUser(null);
+      setStoredProfile(null);
+    }
+
+    // 6. Broadcast deletion event across tabs and components
+    window.dispatchEvent(new CustomEvent("quizora_user_deleted", { detail: { userId: uIdStr } }));
+    window.dispatchEvent(new Event("storage"));
   } catch {}
 }
 
