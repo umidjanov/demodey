@@ -33,7 +33,7 @@ export default function ProfilePage() {
       : "Full-stack student dedicated to mastering active recall, algorithms, and design systems."
   );
   const [selectedAvatar, setSelectedAvatar] = useState(
-    user?.avatar_url || "https://api.dicebear.com/7.x/bottts/svg?seed=alex_learner"
+    user?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${user?.username || "learner"}`
   );
 
   React.useEffect(() => {

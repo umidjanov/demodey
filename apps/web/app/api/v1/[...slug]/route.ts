@@ -1,5 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import initialData from "@/src/lib/initialData.json";
+import fs from "fs";
+import path from "path";
+
+const DB_FILE_PATH = path.join(process.cwd(), "quizora_db.json");
+
+function loadPersistedStore(): Partial<GlobalStore> | null {
+  try {
+    if (fs.existsSync(DB_FILE_PATH)) {
+      const content = fs.readFileSync(DB_FILE_PATH, "utf-8");
+      return JSON.parse(content);
+    }
+  } catch (e) {
+    console.warn("Could not load persisted store:", e);
+  }
+  return null;
+}
+
+function savePersistedStore(store: GlobalStore) {
+  try {
+    const toSave = {
+      users: store.users,
+      profiles: store.profiles,
+      messages: store.messages,
+      discipline_tasks: store.discipline_tasks,
+    };
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(toSave, null, 2), "utf-8");
+  } catch (e) {
+    console.warn("Could not save persisted store:", e);
+  }
+}
 
 // In-Memory Global State for Serverless Execution
 interface GlobalStore {
@@ -25,18 +55,36 @@ declare global {
 function getStore(): GlobalStore {
   if (!global.__QUIZORA_STORE__) {
     const raw = initialData as any;
+    const persisted = loadPersistedStore();
+
+    const baseUsers = (raw.users || []).map((u: any) => ({
+      ...u,
+      id: u.id || u._id || "670e00000000000000000001",
+      role: u.role || "user",
+      is_active: u.is_active ?? true,
+    }));
+
+    const persistedUsers = persisted?.users || [];
+    const usersMap = new Map();
+    [...baseUsers, ...persistedUsers].forEach((u) => {
+      usersMap.set(u.id, u);
+    });
+
+    const baseProfiles = (raw.user_profiles || []).map((p: any) => ({
+      ...p,
+      id: p.id || p._id,
+      user_id: p.user_id || "670e00000000000000000001",
+    }));
+
+    const persistedProfiles = persisted?.profiles || [];
+    const profilesMap = new Map();
+    [...baseProfiles, ...persistedProfiles].forEach((p) => {
+      profilesMap.set(p.user_id, p);
+    });
+
     global.__QUIZORA_STORE__ = {
-      users: (raw.users || []).map((u: any) => ({
-        ...u,
-        id: u.id || u._id || "670e00000000000000000001",
-        role: u.role || "user",
-        is_active: u.is_active ?? true,
-      })),
-      profiles: (raw.user_profiles || []).map((p: any) => ({
-        ...p,
-        id: p.id || p._id,
-        user_id: p.user_id || "670e00000000000000000001",
-      })),
+      users: Array.from(usersMap.values()),
+      profiles: Array.from(profilesMap.values()),
       attempts: raw.quiz_attempts || [],
       categories: raw.categories || [],
       topics: raw.topics || [],
@@ -45,8 +93,8 @@ function getStore(): GlobalStore {
       achievements: raw.achievements || [],
       friends: [],
       community: [],
-      discipline_tasks: raw.discipline_tasks || [],
-      messages: [],
+      discipline_tasks: persisted?.discipline_tasks || raw.discipline_tasks || [],
+      messages: persisted?.messages || [],
     };
 
     // Ensure root admin exists
@@ -87,9 +135,12 @@ function createToken(user: any) {
     JSON.stringify({
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: user.role || "user",
       username: user.username,
-      exp: Math.floor(Date.now() / 1000) + 86400 * 7,
+      first_name: user.first_name || user.username,
+      last_name: user.last_name || "",
+      avatar_url: user.avatar_url,
+      exp: Math.floor(Date.now() / 1000) + 86400 * 30, // 30 days session
     })
   ).toString("base64url");
   return `${header}.${payload}.sig_${user.id}`;
@@ -103,7 +154,53 @@ function getUserFromToken(req: NextRequest, store: GlobalStore) {
     const parts = token.split(".");
     if (parts.length < 2) return null;
     const decoded = JSON.parse(Buffer.from(parts[1], "base64url").toString());
-    const user = store.users.find((u) => u.id === decoded.sub || u.email === decoded.email);
+
+    if (decoded.exp && decoded.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+
+    let user = store.users.find(
+      (u) =>
+        u.id === decoded.sub ||
+        (u.email && decoded.email && u.email.toLowerCase() === decoded.email.toLowerCase())
+    );
+
+    // If user is not yet in memory store, restore from decoded token!
+    if (!user && decoded.sub) {
+      user = {
+        id: decoded.sub,
+        email: decoded.email || `${decoded.username || "user"}@quizora.com`,
+        username: decoded.username || decoded.sub,
+        first_name: decoded.first_name || decoded.username || "O'quvchi",
+        last_name: decoded.last_name || "",
+        role: decoded.role || "user",
+        is_active: true,
+        created_at: new Date().toISOString(),
+        avatar_url:
+          decoded.avatar_url ||
+          `https://api.dicebear.com/7.x/bottts/svg?seed=${decoded.username || decoded.sub}`,
+      };
+      store.users.unshift(user);
+
+      let p = store.profiles.find((x) => x.user_id === decoded.sub);
+      if (!p) {
+        p = {
+          id: "p_" + decoded.sub,
+          user_id: decoded.sub,
+          level: user.role === "admin" ? 30 : 1,
+          level_title: user.role === "admin" ? "Grand Master" : "Boshlang'ich",
+          total_xp: user.role === "admin" ? 90000 : 0,
+          ranking_coins: user.role === "admin" ? 5000 : 0,
+          coins: user.role === "admin" ? 5000 : 0,
+          current_streak: 1,
+          completed_quizzes_count: 0,
+          average_score: 0.0,
+        };
+        store.profiles.push(p);
+      }
+      savePersistedStore(store);
+    }
+
     return user || null;
   } catch {
     return null;
@@ -179,6 +276,7 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
       const newUser = {
         id: userId,
         email,
+        password, // Save password for future logins
         username,
         first_name: first_name || username,
         last_name: last_name || "",
@@ -194,7 +292,7 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         id: "p_" + userId,
         user_id: userId,
         level: 1,
-        level_title: "Beginner",
+        level_title: "Boshlang'ich",
         total_xp: 0,
         ranking_coins: 0,
         coins: 0,
@@ -206,6 +304,7 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         total_incorrect_answers: 0,
       };
       store.profiles.unshift(newProfile);
+      savePersistedStore(store);
 
       const access_token = createToken(newUser);
       return NextResponse.json(
@@ -214,6 +313,7 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
           refresh_token: access_token,
           token_type: "bearer",
           user: newUser,
+          profile: newProfile,
         },
         { status: 201, headers: corsHeaders() }
       );
@@ -253,10 +353,16 @@ async function handleRequest(req: NextRequest, { params }: { params: Promise<{ s
         );
       }
 
-      const user = store.users.find((u) => u.email.toLowerCase() === cleanEmail);
+      const user = store.users.find((u) => u.email && u.email.toLowerCase() === cleanEmail);
       if (!user) {
         return NextResponse.json({ detail: "Email yoki parol noto'g'ri." }, { status: 401, headers: corsHeaders() });
       }
+
+      // Check password if saved
+      if (user.password && user.password !== password) {
+        return NextResponse.json({ detail: "Email yoki parol noto'g'ri." }, { status: 401, headers: corsHeaders() });
+      }
+
       if (!user.is_active) {
         return NextResponse.json({ detail: "Hisob bloklangan yoki faol emas." }, { status: 403, headers: corsHeaders() });
       }

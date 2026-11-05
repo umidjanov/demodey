@@ -26,7 +26,7 @@ import {
 export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { user, profile, logout } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const navItems = [
     { name: t.nav.dashboard, href: "/dashboard", icon: LayoutDashboard },
@@ -117,7 +117,11 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             />
             <div className="truncate">
               <p className="text-sm font-semibold text-[#182536] truncate">
-                {user?.first_name ? `${user.first_name} ${user.last_name}` : "Alex Learner"}
+                {user
+                  ? `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username
+                  : language === "uz"
+                  ? "O'quvchi"
+                  : "Learner"}
               </p>
               <p className="text-xs text-[#07858B] font-medium">
                 Level {profile?.level || 1} · {profile?.level_title || "Beginner"}

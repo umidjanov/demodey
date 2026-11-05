@@ -8,8 +8,11 @@ import { Play, HelpCircle, Sparkles, Award } from "lucide-react";
 
 export function WelcomeBanner() {
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
-  const firstName = user?.first_name || "Alex";
+  const { t, language } = useLanguage();
+  const firstName =
+    user?.first_name ||
+    user?.username ||
+    (language === "uz" ? "O'quvchi" : "Learner");
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-[#066D73] via-[#07858B] to-[#0A9EA5] rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-[#07858B]/15">

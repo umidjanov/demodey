@@ -1,7 +1,15 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { api, getStoredToken, setStoredToken } from "@/src/lib/api";
+import {
+  api,
+  getStoredToken,
+  setStoredToken,
+  getStoredUser,
+  setStoredUser,
+  getStoredProfile,
+  setStoredProfile,
+} from "@/src/lib/api";
 
 interface User {
   id: string;
@@ -42,16 +50,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // Directly initialize state from local storage so that on refresh the user is INSTANTLY available!
+  const [user, setUser] = useState<User | null>(() => getStoredUser());
+  const [profile, setProfile] = useState<Profile | null>(() => getStoredProfile());
+  const [token, setToken] = useState<string | null>(() => getStoredToken());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchProfile = async () => {
     try {
       const p = await api.getProfile();
       if (p) {
-        // Read local overrides if the user edited their profile
         let localOverrides: any = null;
         if (typeof window !== "undefined") {
           try {
@@ -68,23 +76,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         p.last_name = lastName;
         if (avatarUrl) p.avatar_url = avatarUrl;
         setProfile(p);
+        setStoredProfile(p);
 
-        setUser((prev) => ({
+        const updatedUser: User = {
           id: p.user_id,
-          email: p.email || prev?.email || "",
-          username: p.username || prev?.username || "learner",
-          first_name: firstName || prev?.first_name || "",
-          last_name: lastName || prev?.last_name || "",
-          role: p.role || prev?.role || "user",
-          avatar_url: avatarUrl || prev?.avatar_url,
-        }));
+          email: p.email || user?.email || "",
+          username: p.username || user?.username || "learner",
+          first_name: firstName || user?.first_name || "",
+          last_name: lastName || user?.last_name || "",
+          role: p.role || user?.role || "user",
+          avatar_url: avatarUrl || user?.avatar_url,
+        };
+        setUser(updatedUser);
+        setStoredUser(updatedUser);
       }
-    } catch {
-      // Invalid session or logged out
-      setStoredToken(null);
-      setToken(null);
-      setUser(null);
-      setProfile(null);
+    } catch (err) {
+      // DO NOT wipe the session on network or temporary error!
+      // Session is preserved seamlessly.
+      console.warn("Silent profile sync:", err);
     }
   };
 
@@ -92,11 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const savedToken = getStoredToken();
     if (savedToken) {
       setToken(savedToken);
-      fetchProfile().finally(() => setIsLoading(false));
-    } else {
-      setUser(null);
-      setProfile(null);
-      setIsLoading(false);
+      fetchProfile();
     }
   }, []);
 
@@ -106,8 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await api.login({ email, password });
       setStoredToken(res.access_token);
       setToken(res.access_token);
-      setUser(res.user);
-      await fetchProfile();
+      if (res.user) {
+        setUser(res.user);
+        setStoredUser(res.user);
+      }
+      await fetchProfile().catch(() => {});
     } finally {
       setIsLoading(false);
     }
@@ -119,8 +127,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await api.register(data);
       setStoredToken(res.access_token);
       setToken(res.access_token);
-      setUser(res.user);
-      await fetchProfile();
+      if (res.user) {
+        setUser(res.user);
+        setStoredUser(res.user);
+      }
+      if (res.profile) {
+        setProfile(res.profile);
+        setStoredProfile(res.profile);
+      }
+      await fetchProfile().catch(() => {});
     } finally {
       setIsLoading(false);
     }
@@ -133,8 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await api.googleAuth(payload);
       setStoredToken(res.access_token);
       setToken(res.access_token);
-      setUser(res.user);
-      await fetchProfile();
+      if (res.user) {
+        setUser(res.user);
+        setStoredUser(res.user);
+      }
+      await fetchProfile().catch(() => {});
     } finally {
       setIsLoading(false);
     }
@@ -144,6 +162,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser((prev) => {
       if (!prev) return null;
       const merged = { ...prev, ...updated };
+      setStoredUser(merged);
       if (typeof window !== "undefined") {
         try {
           const key = `quizora_profile_${prev.id}`;
@@ -158,6 +177,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setStoredToken(null);
+    setStoredUser(null);
+    setStoredProfile(null);
     setToken(null);
     setUser(null);
     setProfile(null);
