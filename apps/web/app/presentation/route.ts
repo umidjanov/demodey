@@ -5,7 +5,29 @@ import path from 'path';
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    if (url.searchParams.get('download') === 'pptx') {
+    const download = url.searchParams.get('download');
+
+    if (download === 'pdf') {
+      const candidates = [
+        path.join(process.cwd(), 'public', 'Quizora_Taqdimot_8_Sahifalik.pdf'),
+        path.join(process.cwd(), 'Quizora_Taqdimot_8_Sahifalik.pdf'),
+        path.join(process.cwd(), '..', 'Quizora_Taqdimot_8_Sahifalik.pdf')
+      ];
+      for (const p of candidates) {
+        if (fs.existsSync(p)) {
+          const buf = fs.readFileSync(p);
+          return new NextResponse(buf, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Disposition': 'inline; filename="Quizora_Taqdimot_8_Sahifalik.pdf"',
+            },
+          });
+        }
+      }
+      return new NextResponse('PDF File not found', { status: 404 });
+    }
+
+    if (download === 'pptx') {
       const candidates = [
         path.join(process.cwd(), 'public', 'Quizora_Canva_Presentation.pptx'),
         path.join(process.cwd(), 'Quizora_Canva_Presentation.pptx'),
@@ -22,7 +44,7 @@ export async function GET(req: NextRequest) {
           });
         }
       }
-      return new NextResponse('File not found', { status: 404 });
+      return new NextResponse('PPTX File not found', { status: 404 });
     }
 
     const filePath = path.join(process.cwd(), 'public', 'presentation.html');
